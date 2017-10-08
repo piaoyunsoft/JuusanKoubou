@@ -3343,8 +3343,8 @@ tensorflow-1.3.0.dist-info/WHEEL,sha256=4fkP9V5fUlnPlEu2h0nt7u0cPpJipYsJO32nXNev
 tensorflow-1.3.0.dist-info/entry_points.txt,sha256=0g7Hj6NAcOC_jxmU-ys4ZbHI3vTOMCAeNIvBmy4IcXA,118
 tensorflow-1.3.0.dist-info/metadata.json,sha256=FSwZi8wGXQYZJQEmKW195-WVyIyGfP4e9O2K1852dGw,1528
 tensorflow-1.3.0.dist-info/top_level.txt,sha256=hrF9HcQHTkMhDvacQJ50IatO6wijWSIePBCOUAmJzzU,11
-../../Scripts/saved_model_cli.exe,sha256=_DIJ2bwsi2Km9tFL2-KtbSAJL4pSe6uDkL9W_smceZs,98163
-../../Scripts/tensorboard.exe,sha256=wnqXxJPPMuELyM7x0KrAQCxIJ5-A23oAMPNsoTMx2MY,98140
+../../Scripts/saved_model_cli.exe,sha256=ljEDAKKbPO8AiSQZKeLbMPoftQQOCjDwHkMKtEqKmoU,98163
+../../Scripts/tensorboard.exe,sha256=D05jTclkQ6JoGGfvmcOjIwbZ7i7RwcMeRXOl8HcOmtI,98140
 tensorflow-1.3.0.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
 tensorflow/contrib/android/java/org/tensorflow/contrib/android/__pycache__/__init__.cpython-36.pyc,,
 tensorflow/contrib/android/java/org/tensorflow/contrib/__pycache__/__init__.cpython-36.pyc,,

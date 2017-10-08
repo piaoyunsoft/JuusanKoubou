@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import logging as base_logging
+import errno
 import os
 import socket
 import sys
@@ -197,7 +197,7 @@ def make_simple_server(tb_app, host=None, port=None):
     tf.logging.error(msg)
     print(msg)
     raise socket_error
-
+  server.handle_error = _handle_error
   final_port = server.socket.getsockname()[1]
   tensorboard_url = 'http://%s:%d' % (final_host, final_port)
   return server, tensorboard_url
@@ -211,14 +211,22 @@ def run_simple_server(tb_app):
     # An error message was already logged
     # TODO(@jart): Remove log and throw anti-pattern.
     sys.exit(-1)
-  logger = base_logging.getLogger('tensorflow' + util.LogHandler.EPHEMERAL)
-  logger.setLevel(base_logging.INFO)
-  logger.info('TensorBoard %s at %s (Press CTRL+C to quit) ',
-              version.VERSION, url)
-  try:
-    server.serve_forever()
-  finally:
-    logger.info('')
+  sys.stderr.write('TensorBoard %s at %s (Press CTRL+C to quit)\n' %
+                   (version.VERSION, url))
+  sys.stderr.flush()
+  server.serve_forever()
+
+
+# Kludge to override a SocketServer.py method so we can get rid of noisy
+# EPIPE errors. They're kind of a red herring as far as errors go. For
+# example, `curl -N http://localhost:6006/ | head` will cause an EPIPE.
+def _handle_error(unused_request, client_address):
+  exc_info = sys.exc_info()
+  e = exc_info[1]
+  if isinstance(e, IOError) and e.errno == errno.EPIPE:
+    tf.logging.warn('EPIPE caused by %s:%d in HTTP serving' % client_address)
+  else:
+    tf.logging.error('HTTP serving error', exc_info=exc_info)
 
 
 def main(unused_argv=None):
