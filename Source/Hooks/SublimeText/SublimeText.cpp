@@ -237,7 +237,7 @@ BOOL Initialize(PVOID BaseAddress)
 
     module = FindLdrModuleByHandle(nullptr);
 
-    CalcRegKey = SearchStringAndReverseSearchHeader(module->DllBase, RegisterKey, sizeof(RegisterKey), 0xC0);
+    CalcRegKey = SearchStringAndReverseSearchHeader(module->DllBase, RegisterKey, sizeof(RegisterKey), 0x120);
 
 #if 0
 
