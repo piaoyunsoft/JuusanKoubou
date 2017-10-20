@@ -159,8 +159,19 @@ class AsyncHttp(object):
     async def post(self, url, **kwargs):
         allow_redirects = kwargs.setdefault('allow_redirects', False)
 
+        method = 'post'
+
         while True:
-            resp = await self.request('post', url, **kwargs)
+            resp = await self.request(method, url, **kwargs)
+
+            if resp.status in [aiohttp.web_exceptions.HTTPFound.status_code]:
+                method = 'get'
+                for p in ['data', 'headers']:
+                    try:
+                        del kwargs[p]
+                    except KeyError:
+                        pass
+
             if resp.status in [
                     aiohttp.web_exceptions.HTTPFound.status_code,
                     aiohttp.web_exceptions.HTTPMovedPermanently.status_code,
@@ -185,8 +196,8 @@ class AsyncHttp(object):
 
         # kwargs['request_class'] = _ClientRequest.factory(**params)
 
-        hdr = kwargs.get('headers', {})
-        hdr.update(self.headers)
+        hdr = self.headers.copy()
+        hdr.update(kwargs.get('headers', {}))
         kwargs['headers'] = hdr
 
         if self.proxy:

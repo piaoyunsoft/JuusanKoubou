@@ -3249,7 +3249,7 @@ class APIConnection(HttpConnection):
         """ Create a spark cluster.
         @param vxnet: the vxnet id that spark want to join.
         @param spark_version: the version of spark, suck as 1.4.1, 1.5.0, 1.6.0
-        @param enabled_hdfs: whether to use hdfs as storage or not 
+        @param enabled_hdfs: whether to use hdfs as storage or not
         @param storage_size: storage size, unit is GB
         @param spark_type: cpu-memory size of spark cluster, such as 1:1c2g, 2:2c4g, 3:2c8g, 4:4c8g, 5:8c16g
         @param node_count: spark cluster node number, at least 2 for hdfs enabled.

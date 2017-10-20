@@ -16,6 +16,7 @@
 
 import time
 import threading
+import ssl
 try:
     import httplib
 except:
@@ -236,9 +237,18 @@ class HttpConnection(object):
     def _new_conn(self, host, port):
         """ Create new connection
         """
+
+        _SSL_OP_NO_COMPRESSION = getattr(ssl, "OP_NO_COMPRESSION", 0)
+
+        sslcontext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+        sslcontext.options |= ssl.OP_NO_SSLv2
+        sslcontext.options |= ssl.OP_NO_SSLv3
+        sslcontext.options |= _SSL_OP_NO_COMPRESSION
+        sslcontext.set_default_verify_paths()
+
         if self.secure:
             conn = httplib.HTTPSConnection(
-                host, port, timeout=self.http_socket_timeout)
+                host, port, timeout=self.http_socket_timeout, context = sslcontext)
         else:
             conn = httplib.HTTPConnection(
                 host, port, timeout=self.http_socket_timeout)
