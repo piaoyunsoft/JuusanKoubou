@@ -13,7 +13,6 @@
         "comments": "#8A8A8A"
     },
 
-
     "editor.cursorBlinking": "phase",
     "editor.smoothScrolling": true,
     "editor.fontFamily": "Fira Code Retina",
@@ -34,7 +33,6 @@
     "go.formatTool": "goreturns",
     "go.goroot": "D:/Dev/go",
     "go.gopath": "D:/Dev/go/pkgs;D:/Desktop/Source/GoProject;D:/Desktop/Source/Project/Private;D:/Desktop/Source/Falcom",
-
 
     "python.pythonPath": "D:/Dev/Python/python.exe",
     "python.linting.enabled": false,
@@ -66,5 +64,6 @@
 
     "clang.executable": "D:/Dev/Clang/bin/clang.exe",
     "editor.multiCursorModifier": "alt",
-    "workbench.startupEditor": "newUntitledFile"
+    "workbench.startupEditor": "newUntitledFile",
+    "typescript.check.npmIsInstalled": false
 }
