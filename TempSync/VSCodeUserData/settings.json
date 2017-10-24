@@ -64,6 +64,5 @@
 
     "editor.multiCursorModifier": "alt",
     "workbench.startupEditor": "newUntitledFile",
-    "typescript.npm": "D:/Dev/nodejs",
-    "typescript.check.npmIsInstalled": true
+    "typescript.npm": "D:/Dev/nodejs"
 }
