@@ -62,8 +62,8 @@
         "*.xm": "objective-cpp"
     },
 
-    "clang.executable": "D:/Dev/Clang/bin/clang.exe",
     "editor.multiCursorModifier": "alt",
     "workbench.startupEditor": "newUntitledFile",
-    "typescript.check.npmIsInstalled": false
+    "typescript.npm": "D:/Dev/nodejs",
+    "typescript.check.npmIsInstalled": true
 }
