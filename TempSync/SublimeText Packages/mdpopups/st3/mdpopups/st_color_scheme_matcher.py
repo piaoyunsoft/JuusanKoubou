@@ -33,7 +33,13 @@ from collections import namedtuple
 from plistlib import readPlistFromBytes
 import decimal
 
+NEW_SCHEMES = int(sublime.version()) >= 3150
 FONT_STYLE = "font_style" if int(sublime.version()) >= 3151 else "fontStyle"
+GLOBAL_OPTIONS = "globals" if int(sublime.version()) >= 3152 else "defaults"
+
+# XML
+IS_XML_RE = re.compile(br'^[\r\n\s]*<')
+XML_COMMENT_RE = re.compile(br"^[\r\n\s]*<!--[\s\S]*?-->[\s\r\n]*|<!--[\s\S]*?-->")
 
 # For new Sublime format
 FLOAT_TRIM_RE = re.compile(r'^(?P<keep>\d+)(?P<trash>\.0+|(?P<keep2>\.\d*[1-9])0+)$')
@@ -102,6 +108,14 @@ COLOR_MOD_RE = re.compile(
     ''' % COLOR_PARTS
 )
 
+RE_CAMEL_CASE = re.compile('[A-Z]')
+
+
+def to_snake(m):
+    """Convert to snake case."""
+
+    return '_' + m.group(0).lower()
+
 
 def fmt_float(f, p=0):
     """Set float precision and trim precision zeros."""
@@ -160,116 +174,122 @@ def translate_color(m, var, var_src):
 
     color = None
     alpha = None
-    groups = m.groupdict()
-    if groups.get('hex_compressed'):
-        content = m.group('hex_compressed_content')
-        color = "#%02x%02x%02x" % (
-            int(content[0:1] * 2, 16), int(content[1:2] * 2, 16), int(content[2:3] * 2, 16)
-        )
-    elif groups.get('hexa_compressed'):
-        content = m.group('hexa_compressed_content')
-        color = "#%02x%02x%02x" % (
-            int(content[0:1] * 2, 16), int(content[1:2] * 2, 16), int(content[2:3] * 2, 16)
-        )
-        alpha = content[3:]
-    elif groups.get('hex'):
-        content = m.group('hex_content')
-        if len(content) == 6:
-            color = "#%02x%02x%02x" % (
-                int(content[0:2], 16), int(content[2:4], 16), int(content[4:6], 16)
-            )
-        else:
+    if m is not None:
+        groups = m.groupdict()
+        if groups.get('hex_compressed'):
+            content = m.group('hex_compressed_content')
             color = "#%02x%02x%02x" % (
                 int(content[0:1] * 2, 16), int(content[1:2] * 2, 16), int(content[2:3] * 2, 16)
             )
-    elif groups.get('hexa'):
-        content = m.group('hexa_content')
-        if len(content) == 8:
-            color = "#%02x%02x%02x" % (
-                int(content[0:2], 16), int(content[2:4], 16), int(content[4:6], 16)
-            )
-            alpha = content[6:]
-        else:
+        elif groups.get('hexa_compressed'):
+            content = m.group('hexa_compressed_content')
             color = "#%02x%02x%02x" % (
                 int(content[0:1] * 2, 16), int(content[1:2] * 2, 16), int(content[2:3] * 2, 16)
             )
             alpha = content[3:]
-    elif groups.get('rgb'):
-        content = [x.strip() for x in m.group('rgb_content').split(',')]
-        if content[0].endswith('%'):
-            r = round_int(clamp(float(content[0].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
-            g = round_int(clamp(float(content[1].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
-            b = round_int(clamp(float(content[2].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
-            color = "#%02x%02x%02x" % (r, g, b)
-        else:
-            color = "#%02x%02x%02x" % (
-                clamp(round_int(float(content[0])), 0, 255),
-                clamp(round_int(float(content[1])), 0, 255),
-                clamp(round_int(float(content[2])), 0, 255)
-            )
-    elif groups.get('rgba'):
-        content = [x.strip() for x in m.group('rgba_content').split(',')]
-        if content[0].endswith('%'):
-            r = round_int(clamp(float(content[0].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
-            g = round_int(clamp(float(content[1].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
-            b = round_int(clamp(float(content[2].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
-            color = "#%02x%02x%02x" % (r, g, b)
-        else:
-            color = "#%02x%02x%02x" % (
-                clamp(round_int(float(content[0])), 0, 255),
-                clamp(round_int(float(content[1])), 0, 255),
-                clamp(round_int(float(content[2])), 0, 255)
-            )
-        if content[3].endswith('%'):
-            alpha = alpha_percent_normalize(content[3])
-        else:
-            alpha = alpha_dec_normalize(content[3])
-    elif groups.get('hsl'):
-        content = [x.strip() for x in m.group('hsl_content').split(',')]
-        rgba = RGBA()
-        hue = float(content[0])
-        if hue < 0.0 or hue > 360.0:
-            hue = hue % 360.0
-        h = hue / 360.0
-        s = clamp(float(content[1].strip('%')), 0.0, 100.0) / 100.0
-        l = clamp(float(content[2].strip('%')), 0.0, 100.0) / 100.0
-        rgba.fromhls(h, l, s)
-        color = rgba.get_rgb()
-    elif groups.get('hsla'):
-        content = [x.strip() for x in m.group('hsla_content').split(',')]
-        rgba = RGBA()
-        hue = float(content[0])
-        if hue < 0.0 or hue > 360.0:
-            hue = hue % 360.0
-        h = hue / 360.0
-        s = clamp(float(content[1].strip('%')), 0.0, 100.0) / 100.0
-        l = clamp(float(content[2].strip('%')), 0.0, 100.0) / 100.0
-        rgba.fromhls(h, l, s)
-        color = rgba.get_rgb()
-        if content[3].endswith('%'):
-            alpha = alpha_percent_normalize(content[3])
-        else:
-            alpha = alpha_dec_normalize(content[3])
-    elif groups.get('var'):
-        content = m.group('var_content')
-        if content in var:
-            color = var[content]
-        else:
-            v = var_src[content]
-            m = COLOR_RE.match(v.strip())
-            color = translate_color(m, var, var_src)
-    elif groups.get('x11colors'):
-        try:
-            color = x11colors.name2hex(m.group('x11colors')).lower()
-        except:
-            pass
-    elif groups.get('color'):
-        content = m.group('color')
-        content = COLOR_RGB_SPACE_RE.sub((lambda match, v=var, vs=var_src: translate_color(match, v, vs)), content)
-        n = -1
-        while n:
-            content, n = COLOR_MOD_RE.subn(blend, content)
-        color = content
+        elif groups.get('hex'):
+            content = m.group('hex_content')
+            if len(content) == 6:
+                color = "#%02x%02x%02x" % (
+                    int(content[0:2], 16), int(content[2:4], 16), int(content[4:6], 16)
+                )
+            else:
+                color = "#%02x%02x%02x" % (
+                    int(content[0:1] * 2, 16), int(content[1:2] * 2, 16), int(content[2:3] * 2, 16)
+                )
+        elif groups.get('hexa'):
+            content = m.group('hexa_content')
+            if len(content) == 8:
+                color = "#%02x%02x%02x" % (
+                    int(content[0:2], 16), int(content[2:4], 16), int(content[4:6], 16)
+                )
+                alpha = content[6:]
+            else:
+                color = "#%02x%02x%02x" % (
+                    int(content[0:1] * 2, 16), int(content[1:2] * 2, 16), int(content[2:3] * 2, 16)
+                )
+                alpha = content[3:]
+        elif groups.get('rgb'):
+            content = [x.strip() for x in m.group('rgb_content').split(',')]
+            if content[0].endswith('%'):
+                r = round_int(clamp(float(content[0].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
+                g = round_int(clamp(float(content[1].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
+                b = round_int(clamp(float(content[2].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
+                color = "#%02x%02x%02x" % (r, g, b)
+            else:
+                color = "#%02x%02x%02x" % (
+                    clamp(round_int(float(content[0])), 0, 255),
+                    clamp(round_int(float(content[1])), 0, 255),
+                    clamp(round_int(float(content[2])), 0, 255)
+                )
+        elif groups.get('rgba'):
+            content = [x.strip() for x in m.group('rgba_content').split(',')]
+            if content[0].endswith('%'):
+                r = round_int(clamp(float(content[0].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
+                g = round_int(clamp(float(content[1].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
+                b = round_int(clamp(float(content[2].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
+                color = "#%02x%02x%02x" % (r, g, b)
+            else:
+                color = "#%02x%02x%02x" % (
+                    clamp(round_int(float(content[0])), 0, 255),
+                    clamp(round_int(float(content[1])), 0, 255),
+                    clamp(round_int(float(content[2])), 0, 255)
+                )
+            if content[3].endswith('%'):
+                alpha = alpha_percent_normalize(content[3])
+            else:
+                alpha = alpha_dec_normalize(content[3])
+        elif groups.get('hsl'):
+            content = [x.strip() for x in m.group('hsl_content').split(',')]
+            rgba = RGBA()
+            hue = float(content[0])
+            if hue < 0.0 or hue > 360.0:
+                hue = hue % 360.0
+            h = hue / 360.0
+            s = clamp(float(content[1].strip('%')), 0.0, 100.0) / 100.0
+            l = clamp(float(content[2].strip('%')), 0.0, 100.0) / 100.0
+            rgba.fromhls(h, l, s)
+            color = rgba.get_rgb()
+        elif groups.get('hsla'):
+            content = [x.strip() for x in m.group('hsla_content').split(',')]
+            rgba = RGBA()
+            hue = float(content[0])
+            if hue < 0.0 or hue > 360.0:
+                hue = hue % 360.0
+            h = hue / 360.0
+            s = clamp(float(content[1].strip('%')), 0.0, 100.0) / 100.0
+            l = clamp(float(content[2].strip('%')), 0.0, 100.0) / 100.0
+            rgba.fromhls(h, l, s)
+            color = rgba.get_rgb()
+            if content[3].endswith('%'):
+                alpha = alpha_percent_normalize(content[3])
+            else:
+                alpha = alpha_dec_normalize(content[3])
+        elif groups.get('var'):
+            content = m.group('var_content')
+            if content in var:
+                color = var[content]
+            else:
+                v = var_src[content]
+                m = COLOR_RE.match(v.strip())
+                color = translate_color(m, var, var_src)
+        elif groups.get('x11colors'):
+            try:
+                color = x11colors.name2hex(m.group('x11colors')).lower()
+            except Exception:
+                pass
+        elif groups.get('color'):
+            content = m.group('color')
+            try:
+                content = COLOR_RGB_SPACE_RE.sub(
+                    (lambda match, v=var, vs=var_src: translate_color(match, v, vs)), content
+                )
+                n = -1
+                while n:
+                    content, n = COLOR_MOD_RE.subn(blend, content)
+                color = content
+            except Exception:
+                pass
 
     if color is not None and alpha is not None:
         color += alpha
@@ -307,53 +327,101 @@ class ColorSchemeMatcher(object):
         """Initialize."""
         if color_filter is None:
             color_filter = self.filter
-        self.legacy = not scheme_file.lower().endswith('.sublime-color-scheme')
         self.color_scheme = path.normpath(scheme_file)
         self.scheme_file = path.basename(self.color_scheme)
-        if self.legacy:
-            self.scheme_obj = color_filter(
-                readPlistFromBytes(
-                    re.sub(
-                        br"^[\r\n\s]*<!--[\s\S]*?-->[\s\r\n]*|<!--[\s\S]*?-->", b'',
-                        sublime.load_binary_resource(sublime_format_path(self.color_scheme))
-                    )
-                )
-            )
+
+        content = sublime.load_binary_resource(sublime_format_path(self.color_scheme))
+        if scheme_file.lower().endswith(('.tmtheme', '.hidden-tmtheme')) or IS_XML_RE.match(content) is not None:
+            self.legacy = True
+            self.convert_format(readPlistFromBytes(XML_COMMENT_RE.sub(b'', content)))
         else:
-            sublime.decode_value(
-                sublime.load_resource(sublime_format_path(self.color_scheme)),
-                preserve_lines=True
-            )
+            self.legacy = False
+            self.scheme_obj = sublime.decode_value(content.decode('utf-8'))
+            if 'variables' not in self.scheme_obj:
+                self.scheme_obj['variables'] = {}
+            if GLOBAL_OPTIONS not in self.scheme_obj:
+                self.scheme_obj[GLOBAL_OPTIONS] = {}
+            if 'rules' not in self.scheme_obj:
+                self.scheme_obj['rules'] = []
+        self.overrides = []
+        if NEW_SCHEMES:
+            self.merge_overrides()
+        self.scheme_obj = color_filter(self.scheme_obj)
         self.scheme_file = scheme_file
         self.matched = {}
         self.variables = {}
 
         self.parse_scheme()
 
-    def filter(self, plist):
+    def convert_format(self, obj):
+        """Convert tmTheme object to new format."""
+
+        self.scheme_obj = {
+            "variables": {},
+            GLOBAL_OPTIONS: {},
+            "rules": []
+        }
+
+        for k, v in obj.items():
+            if k == "settings":
+                continue
+            self.scheme_obj[k] = v
+
+        for item in obj["settings"]:
+            if item.get('scope', None) is None and item.get('name', None) is None:
+                for k, v in item["settings"].items():
+                    self.scheme_obj[GLOBAL_OPTIONS][RE_CAMEL_CASE.sub(to_snake, k)] = v
+            if 'settings' in item and item.get('scope') is not None:
+                self.scheme_obj['rules'].append(
+                    {
+                        "name": item.get('name', ''),
+                        "scope": item.get('scope'),
+                        "foreground": item['settings'].get('foreground'),
+                        "background": item['settings'].get('background'),
+                        "selection_foreground": item["settings"].get("selection_foreground"),
+                        FONT_STYLE: item['settings'].get('fontStyle', '')
+                    }
+                )
+
+    def merge_overrides(self):
+        """Merge override schemes."""
+
+        current_file = sublime_format_path(self.color_scheme)
+        for override in sublime.find_resources('%s.sublime-color-scheme' % path.splitext(self.scheme_file)[0]):
+            if override != current_file:
+                ojson = sublime.decode_value(sublime.load_resource(override))
+
+                for k, v in ojson.get('variables', {}).items():
+                    self.scheme_obj['variables'][k] = v
+
+                for k, v in ojson.get(GLOBAL_OPTIONS, {}).items():
+                    self.scheme_obj[GLOBAL_OPTIONS][k] = v
+
+                for item in ojson.get('rules', []):
+                    self.scheme_obj['rules'].append(item)
+
+                self.overrides.append(override)
+
+    def filter(self, scheme):
         """Dummy filter call that does nothing."""
 
-        return plist
+        return scheme
 
     def parse_scheme(self):
         """Parse the color scheme."""
 
-        if self.legacy:
-            color_settings = {}
-            for item in self.scheme_obj["settings"]:
-                if item.get('scope', None) is None and item.get('name', None) is None:
-                    color_settings = item["settings"]
-                    break
-        else:
-            for k, v in self.scheme_obj.get('variables', {}).items():
-                m = COLOR_RE.match(v.strip())
-                self.variables[k] = translate_color(m, self.variables, self.scheme_obj.get('variables'))
+        for k, v in self.scheme_obj.get('variables', {}).items():
+            m = COLOR_RE.match(v.strip())
+            var = translate_color(m, self.variables, self.scheme_obj.get('variables')) if m is not None else None
+            self.variables[k] = var if var is not None else ""
 
-            color_settings = {}
-            for k, v in self.scheme_obj["defaults"].items():
-                m = COLOR_RE.match(v.strip())
-                if m is not None:
-                    color_settings[k] = translate_color(m, self.variables, {})
+        color_settings = {}
+        for k, v in self.scheme_obj[GLOBAL_OPTIONS].items():
+            m = COLOR_RE.match(v.strip())
+            if m is not None:
+                global_color = translate_color(m, self.variables, {})
+                if global_color is not None:
+                    color_settings[k] = global_color
 
         # Get general theme colors from color scheme file
         bground, bground_sim = self.process_color(
@@ -366,65 +434,48 @@ class ColorSchemeMatcher(object):
         }
 
         fground, fground_sim = self.process_color(color_settings.get("foreground", '#000000'))
-        sbground = self.process_color(color_settings.get("selection", fground))[0]
-        sbground_sim = self.process_color(color_settings.get("selection", fground_sim))[1]
-        sfground, sfground_sim = self.process_color(color_settings.get("selectionForeground", None))
+        sbground, sbground_sim = self.process_color(color_settings.get("selection", "#0000FF"))
+        sfground, sfground_sim = self.process_color(color_settings.get("selection_foreground", None))
         gbground = self.process_color(color_settings.get("gutter", bground))[0]
         gbground_sim = self.process_color(color_settings.get("gutter", bground_sim))[1]
-        gfground = self.process_color(color_settings.get("gutterForeground", fground))[0]
-        gfground_sim = self.process_color(color_settings.get("gutterForeground", fground_sim))[1]
+        gfground = self.process_color(color_settings.get("gutter_foreground", fground))[0]
+        gfground_sim = self.process_color(color_settings.get("gutter_foreground", fground_sim))[1]
 
         self.special_colors["foreground"] = {'color': fground, 'color_simulated': fground_sim}
         self.special_colors["background"] = {'color': bground, 'color_simulated': bground_sim}
-        self.special_colors["selectionForeground"] = {'color': sfground, 'color_simulated': sfground_sim}
+        self.special_colors["selection_foreground"] = {'color': sfground, 'color_simulated': sfground_sim}
         self.special_colors["selection"] = {'color': sbground, 'color_simulated': sbground_sim}
         self.special_colors["gutter"] = {'color': gbground, 'color_simulated': gbground_sim}
-        self.special_colors["gutterForeground"] = {'color': gfground, 'color_simulated': gfground_sim}
+        self.special_colors["gutter_foreground"] = {'color': gfground, 'color_simulated': gfground_sim}
 
         self.colors = {}
-        if self.legacy:
-            # Create scope colors mapping from color scheme file
-            for item in self.scheme_obj["settings"]:
-                name = item.get('name', '')
-                scope = item.get('scope', None)
-                color = None
-                bgcolor = None
-                style = []
-                if 'settings' in item and scope is not None:
-                    color = item['settings'].get('foreground', None)
-                    bgcolor = item['settings'].get('background', None)
-                    if 'fontStyle' in item['settings']:
-                        for s in item['settings']['fontStyle'].split(' '):
-                            if s == "bold" or s == "italic":  # or s == "underline":
-                                style.append(s)
+        # Create scope colors mapping from color scheme file
+        for item in self.scheme_obj["rules"]:
+            name = item.get('name', '')
+            scope = item.get('scope', None)
+            color = None
+            bgcolor = None
+            scolor = None
+            style = []
+            if scope is not None:
+                color = item.get('foreground', None)
+                if color is not None:
+                    color = translate_color(COLOR_RE.match(color.strip()), self.variables, {})
+                bgcolor = item.get('background', None)
+                if bgcolor is not None:
+                    bgcolor = translate_color(COLOR_RE.match(bgcolor.strip()), self.variables, {})
+                scolor = item.get('selection_foreground', None)
+                if scolor is not None:
+                    scolor = translate_color(COLOR_RE.match(scolor.strip()), self.variables, {})
+                if FONT_STYLE in item:
+                    for s in item.get(FONT_STYLE, '').split(' '):
+                        if s == "bold" or s == "italic":  # or s == "underline":
+                            style.append(s)
 
-                if scope is not None:
-                    self.add_entry(name, scope, color, bgcolor, style)
+            if scope is not None:
+                self.add_entry(name, scope, color, bgcolor, scolor, style)
 
-        else:
-            # Create scope colors mapping from color scheme file
-            for item in self.scheme_obj["rules"]:
-                name = item.get('name', '')
-                scope = item.get('scope', None)
-                color = None
-                bgcolor = None
-                style = []
-                if scope is not None:
-                    color = item.get('foreground', None)
-                    if color is not None:
-                        color = translate_color(COLOR_RE.match(color.strip()), self.variables, {})
-                    bgcolor = item.get('background', None)
-                    if bgcolor is not None:
-                        bgcolor = translate_color(COLOR_RE.match(bgcolor.strip()), self.variables, {})
-                    if FONT_STYLE in item:
-                        for s in item[FONT_STYLE].split(' '):
-                            if s == "bold" or s == "italic":  # or s == "underline":
-                                style.append(s)
-
-                if scope is not None:
-                    self.add_entry(name, scope, color, bgcolor, style)
-
-    def add_entry(self, name, scope, color, bgcolor, style):
+    def add_entry(self, name, scope, color, bgcolor, scolor, style):
         """Add color entry."""
 
         if color is not None:
@@ -435,6 +486,12 @@ class ColorSchemeMatcher(object):
             bg, bg_sim = self.process_color(bgcolor)
         else:
             bg, bg_sim = None, None
+        if scolor is not None:
+            sfg, sfg_sim = self.process_color(
+                scolor, bground=self.special_colors["selection"]['color_simulated']
+            )
+        else:
+            sfg, sfg_sim = None, None
         self.colors[scope] = {
             "name": name,
             "scope": scope,
@@ -442,10 +499,12 @@ class ColorSchemeMatcher(object):
             "color_simulated": fg_sim,
             "bgcolor": bg,
             "bgcolor_simulated": bg_sim,
+            "selection_color": sfg,
+            "selection_color_simulated": sfg_sim,
             "style": style
         }
 
-    def process_color(self, color, simple_strip=False):
+    def process_color(self, color, simple_strip=False, bground=None):
         """
         Strip transparency from the color value.
 
@@ -458,16 +517,12 @@ class ColorSchemeMatcher(object):
             return None, None
 
         if not color.startswith('#'):
-            if self.legacy:
-                color = x11colors.name2hex(color)
-                if color is None:
-                    return None, None
-            else:
-                return None, None
+            return None, None
 
         rgba = RGBA(color.replace(" ", ""))
         if not simple_strip:
-            bground = self.special_colors['background']['color_simulated']
+            if bground is None:
+                bground = self.special_colors['background']['color_simulated']
             rgba.apply_alpha(bground if bground != "" else "#FFFFFF")
 
         return color, rgba.get_rgb()
@@ -479,10 +534,11 @@ class ColorSchemeMatcher(object):
         Get the visible look of the color by simulated transparency if requrested.
         """
 
+        name = RE_CAMEL_CASE.sub(to_snake, name)
         return self.special_colors.get(name, {}).get('color_simulated' if simulate_transparency else 'color')
 
     def get_scheme_obj(self):
-        """Get the plist file used during the process."""
+        """Get the scheme file used during the process."""
 
         return self.scheme_obj
 
@@ -511,9 +567,12 @@ class ColorSchemeMatcher(object):
         color_sim = self.special_colors['foreground']['color_simulated']
         bgcolor = self.special_colors['background']['color'] if not explicit_background else None
         bgcolor_sim = self.special_colors['background']['color_simulated'] if not explicit_background else None
+        scolor = self.special_colors['selection_foreground']['color']
+        scolor_sim = self.special_colors['selection_foreground']['color_simulated']
         style = set([])
         color_selector = SchemeSelectors("foreground", "foreground")
         bg_selector = SchemeSelectors("background", "background")
+        scolor_selector = SchemeSelectors("selection_foreground", "selection_foreground")
         style_selectors = {"bold": SchemeSelectors("", ""), "italic": SchemeSelectors("", "")}
         if scope_key in self.matched:
             color = self.matched[scope_key]["color"]
@@ -521,14 +580,18 @@ class ColorSchemeMatcher(object):
             style = self.matched[scope_key]["style"]
             bgcolor = self.matched[scope_key]["bgcolor"]
             bgcolor_sim = self.matched[scope_key]["bgcolor_simulated"]
+            scolor = self.matched[scope_key]["scolor"]
+            scolor_sim = self.matched[scope_key]["scolor_simulated"]
             selectors = self.matched[scope_key]["selectors"]
             color_selector = selectors["color"]
             bg_selector = selectors["background"]
+            scolor_selector = selectors["scolor"]
             style_selectors = selectors["style"]
         else:
             best_match_bg = 0
             best_match_fg = 0
             best_match_style = 0
+            best_match_sfg = 0
             for key in self.colors:
                 match = sublime.score_selector(scope_key, key)
                 if self.colors[key]["color"] is not None and match > best_match_fg:
@@ -536,6 +599,11 @@ class ColorSchemeMatcher(object):
                     color = self.colors[key]["color"]
                     color_sim = self.colors[key]["color_simulated"]
                     color_selector = SchemeSelectors(self.colors[key]["name"], self.colors[key]["scope"])
+                if self.colors[key]["selection_color"] is not None and match > best_match_sfg:
+                    best_match_sfg = match
+                    scolor = self.colors[key]["selection_color"]
+                    scolor_sim = self.colors[key]["selection_color_simulated"]
+                    scolor_selector = SchemeSelectors(self.colors[key]["name"], self.colors[key]["scope"])
                 if self.colors[key]["style"] is not None and match > best_match_style:
                     best_match_style = match
                     for s in self.colors[key]["style"]:
@@ -562,24 +630,28 @@ class ColorSchemeMatcher(object):
             self.matched[scope_key] = {
                 "color": color,
                 "bgcolor": bgcolor,
+                "scolor": scolor,
                 "color_simulated": color_sim,
                 "bgcolor_simulated": bgcolor_sim,
+                "scolor_simulated": scolor_sim,
                 "style": style,
                 "selectors": {
                     "color": color_selector,
                     "background": bg_selector,
+                    "scolor": scolor_selector,
                     "style": style_selectors
                 }
             }
 
         if selected:
-            if self.special_colors['selectionForeground']['color']:
-                color = self.special_colors['selectionForeground']['color']
-                color_sim = color = self.special_colors['selectionForeground']['color_simulated']
-                style = ''
+            if scolor:
+                color = scolor
+                color_sim = scolor_sim
+                color_selector = scolor_selector
             if self.special_colors['selection']['color']:
                 bgcolor = self.special_colors['selection']['color']
-                bgcolor_sim = color = self.special_colors['selection']['color_simulated']
+                bgcolor_sim = self.special_colors['selection']['color_simulated']
+                bg_selector = SchemeSelectors("selection", "selection")
 
         return SchemeColors(
             color, color_sim, bgcolor, bgcolor_sim, style,
