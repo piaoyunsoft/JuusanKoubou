@@ -1,7 +1,7 @@
 // Place your settings in this file to overwrite the default settings
 {
     "materialTheme.cache.workbench.settings": {
-        "themeColours": "Darker"
+        "themeColours": "Darker High Contrast"
     },
     "workbench.colorTheme": "Material Theme",
     "workbench.iconTheme": "eq-material-theme-icons",
