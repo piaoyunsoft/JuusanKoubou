@@ -22,6 +22,8 @@
     "files.trimTrailingWhitespace": true,
     "window.newWindowDimensions": "inherit",
 
+    "clang.executable": "D:/Dev/Clang/bin/clang.exe",
+
     "go.buildOnSave": "off",
     "go.lintOnSave": "off",
     "go.vetOnSave": "off",
