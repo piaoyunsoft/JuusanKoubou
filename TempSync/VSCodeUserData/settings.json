@@ -3,14 +3,13 @@
     "materialTheme.cache.workbench.settings": {
         "themeColours": "Darker High Contrast"
     },
+
+    "workbench.startupEditor": "newUntitledFile",
     "workbench.colorTheme": "Material Theme",
     "workbench.iconTheme": "eq-material-theme-icons",
     "workbench.colorCustomizations": {
         "tab.inactiveForeground": "#8A8A8A",
         "editorLineNumber.foreground": "#828282"
-    },
-    "editor.tokenColorCustomizations": {
-        "comments": "#8A8A8A"
     },
 
     "editor.cursorBlinking": "phase",
@@ -19,10 +18,19 @@
     "editor.fontSize": 14,
     "editor.fontLigatures": true,
     "editor.renderWhitespace": "all",
+    "editor.minimap.showSlider": "always",
     "files.trimTrailingWhitespace": true,
-    "window.newWindowDimensions": "inherit",
+    "editor.multiCursorModifier": "alt",
+    "editor.tokenColorCustomizations": {
+        "comments": "#8A8A8A"
+    },
 
-    "clang.executable": "D:/Dev/Clang/bin/clang.exe",
+    "window.newWindowDimensions": "inherit",
+    "window.zoomLevel": 0,
+
+    "files.associations": {
+        "*.xm": "objective-cpp"
+    },
 
     "go.buildOnSave": "off",
     "go.lintOnSave": "off",
@@ -59,12 +67,6 @@
     "python.unitTest.nosetestsEnabled": false,
     "python.unitTest.nosetestPath": "nosetests",
     "python.unitTest.unittestEnabled": false,
-    "window.zoomLevel": 0,
-    "files.associations": {
-        "*.xm": "objective-cpp"
-    },
 
-    "editor.multiCursorModifier": "alt",
-    "workbench.startupEditor": "newUntitledFile",
     "typescript.npm": "D:/Dev/nodejs"
 }
