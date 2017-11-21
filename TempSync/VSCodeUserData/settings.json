@@ -68,5 +68,7 @@
     "python.unitTest.nosetestPath": "nosetests",
     "python.unitTest.unittestEnabled": false,
 
-    "typescript.npm": "D:/Dev/nodejs"
+    "typescript.npm": "D:/Dev/nodejs",
+
+    "git.path": "D:/Dev/PortableGit/bin/git.exe"
 }
