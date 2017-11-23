@@ -70,5 +70,9 @@
 
     "typescript.npm": "D:/Dev/nodejs",
 
-    "git.path": "D:/Dev/PortableGit/bin/git.exe"
+    "git.enabled": false,
+    "git.autofetch": false,
+    "git.autorefresh": false,
+    "git.path": "D:/Dev/PortableGit/bin/git.exe",
+    "git.ignoreMissingGitWarning": true
 }
