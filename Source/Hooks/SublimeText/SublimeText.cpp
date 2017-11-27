@@ -237,7 +237,7 @@ BOOL Initialize(PVOID BaseAddress)
 
     module = FindLdrModuleByHandle(nullptr);
 
-    CalcRegKey = SearchStringAndReverseSearchHeader(module->DllBase, RegisterKey, sizeof(RegisterKey), 0x120);
+    CalcRegKey = SearchStringAndReverseSearchHeader(module->DllBase, RegisterKey, sizeof(RegisterKey), 0x130);
 
 #if 0
 
@@ -337,7 +337,7 @@ BOOL Initialize(PVOID BaseAddress)
     PatchMemory(f, countof(f), nullptr);
 
     SetExeDirectoryAsCurrent();
-    EnumDirectoryFiles(nullptr, L"*.*", 0, L"Data\\Packages\\User\\Fonts", nullptr, 
+    EnumDirectoryFiles(nullptr, L"*.*", 0, L"Data\\Packages\\User\\Fonts", nullptr,
         [](PVOID, PWIN32_FIND_DATAW FindData, ULONG_PTR) -> LONG
         {
             AddFontResourceExW(FindData->cFileName, FR_PRIVATE, nullptr);
