@@ -94,14 +94,13 @@ Source/LocaleEmulator/LocaleEmulator/LoaderDll.dll
 .gitignore
 /TempSync/SublimeText Packages/User/GoSublime/windows-x32
 /TempSync/SublimeText Packages/User/*.*-ca-bundle
-/Source/GoProject/src/AppleIdRegister
-/Source/GoProject/pkg
 /Source/Project/AppleIdAuthorizer
 /Source/Project/WindStockProj
-/Source/GoProject/src/AppleIdAuthorizer
-/Source/GoProject/src/AppleIdRegister2
-/Source/GoProject/src/iTunesTool/
-/Source/GoProject/src/mail_register/
+
+/Source/GoProject/
+!/Source/GoProject/src/ios_decache/
+!/Source/GoProject/src/s1/
+!/Source/GoProject/src/video_downloader/
 
 /TempSync/AtomConfig/.apm/_git-remotes/
 /Source/sources
