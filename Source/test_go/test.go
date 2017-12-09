@@ -15,14 +15,18 @@ import (
     "net"
     "ml/io2"
     "plistlib"
+    "reflect"
 )
 
+type fuck struct {
+
+}
+
+func (f *fuck) fuckyou() {
+    panic("fuck")
+}
+
 func main() {
-    for {
-        if random.IntRange(0, 1000) == 0 {
-            fmt.Println("fuck")
-        } else {
-            fmt.Println("you")
-        }
-    }
+    f := fuck{}
+    f.fuckyou()
 }
