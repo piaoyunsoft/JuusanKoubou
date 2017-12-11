@@ -110,6 +110,7 @@ class FileStream(object):
         self._stream = None
         self._endian = endian
         self._encoding = ANSI_CODE_PAGE
+        self._ptrsize = 0
 
         if file is not None:
             self.Open(file, mode)
@@ -135,6 +136,14 @@ class FileStream(object):
     @property
     def Encoding(self):
         return self._encoding
+
+    @property
+    def PointerSize(self):
+        return self._ptrsize
+
+    @property.setter
+    def PointerSize(self, size):
+        self._ptrsize = size
 
     @Encoding.setter
     def Encoding(self, value):
@@ -374,6 +383,15 @@ class FileStream(object):
 
     def ReadULong64(self):
         return _ReadULong64(self._stream, self._endian)
+
+    def ReadPointer(self):
+        if self.PointerSize == 4:
+            return self.ReadULong()
+
+        elif self.PointerSize == 8:
+            return self.ReadULong64()
+
+        raise Exception('incoorect pointer size %d' % self.PointerSize)
 
     def ReadFloat(self):
         return _ReadFloat(self._stream, self._endian)
