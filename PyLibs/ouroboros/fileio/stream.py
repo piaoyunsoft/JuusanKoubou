@@ -137,17 +137,17 @@ class FileStream(object):
     def Encoding(self):
         return self._encoding
 
+    @Encoding.setter
+    def Encoding(self, value):
+        self._encoding = value
+
     @property
     def PointerSize(self):
         return self._ptrsize
 
-    @property.setter
+    @PointerSize.setter
     def PointerSize(self, size):
         self._ptrsize = size
-
-    @Encoding.setter
-    def Encoding(self, value):
-        self._encoding = value
 
     def Open(self, file, mode = 'rb'):
         if isinstance(file, (bytes, bytearray)):
