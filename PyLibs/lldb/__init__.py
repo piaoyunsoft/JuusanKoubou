@@ -974,6 +974,15 @@ eInstrumentationRuntimeTypeAddressSanitizer = _lldb.eInstrumentationRuntimeTypeA
 _lldb.eInstrumentationRuntimeTypeThreadSanitizer_swigconstant(_lldb)
 eInstrumentationRuntimeTypeThreadSanitizer = _lldb.eInstrumentationRuntimeTypeThreadSanitizer
 
+_lldb.eInstrumentationRuntimeTypeUndefinedBehaviorSanitizer_swigconstant(_lldb)
+eInstrumentationRuntimeTypeUndefinedBehaviorSanitizer = _lldb.eInstrumentationRuntimeTypeUndefinedBehaviorSanitizer
+
+_lldb.eInstrumentationRuntimeTypeMainThreadChecker_swigconstant(_lldb)
+eInstrumentationRuntimeTypeMainThreadChecker = _lldb.eInstrumentationRuntimeTypeMainThreadChecker
+
+_lldb.eInstrumentationRuntimeTypeSwiftRuntimeReporting_swigconstant(_lldb)
+eInstrumentationRuntimeTypeSwiftRuntimeReporting = _lldb.eInstrumentationRuntimeTypeSwiftRuntimeReporting
+
 _lldb.eNumInstrumentationRuntimeTypes_swigconstant(_lldb)
 eNumInstrumentationRuntimeTypes = _lldb.eNumInstrumentationRuntimeTypes
 
@@ -1618,6 +1627,39 @@ eBasicTypeNullPtr = _lldb.eBasicTypeNullPtr
 
 _lldb.eBasicTypeOther_swigconstant(_lldb)
 eBasicTypeOther = _lldb.eBasicTypeOther
+
+_lldb.eTraceTypeNone_swigconstant(_lldb)
+eTraceTypeNone = _lldb.eTraceTypeNone
+
+_lldb.eTraceTypeProcessorTrace_swigconstant(_lldb)
+eTraceTypeProcessorTrace = _lldb.eTraceTypeProcessorTrace
+
+_lldb.eStructuredDataTypeInvalid_swigconstant(_lldb)
+eStructuredDataTypeInvalid = _lldb.eStructuredDataTypeInvalid
+
+_lldb.eStructuredDataTypeNull_swigconstant(_lldb)
+eStructuredDataTypeNull = _lldb.eStructuredDataTypeNull
+
+_lldb.eStructuredDataTypeGeneric_swigconstant(_lldb)
+eStructuredDataTypeGeneric = _lldb.eStructuredDataTypeGeneric
+
+_lldb.eStructuredDataTypeArray_swigconstant(_lldb)
+eStructuredDataTypeArray = _lldb.eStructuredDataTypeArray
+
+_lldb.eStructuredDataTypeInteger_swigconstant(_lldb)
+eStructuredDataTypeInteger = _lldb.eStructuredDataTypeInteger
+
+_lldb.eStructuredDataTypeFloat_swigconstant(_lldb)
+eStructuredDataTypeFloat = _lldb.eStructuredDataTypeFloat
+
+_lldb.eStructuredDataTypeBoolean_swigconstant(_lldb)
+eStructuredDataTypeBoolean = _lldb.eStructuredDataTypeBoolean
+
+_lldb.eStructuredDataTypeString_swigconstant(_lldb)
+eStructuredDataTypeString = _lldb.eStructuredDataTypeString
+
+_lldb.eStructuredDataTypeDictionary_swigconstant(_lldb)
+eStructuredDataTypeDictionary = _lldb.eStructuredDataTypeDictionary
 
 _lldb.eTypeClassInvalid_swigconstant(_lldb)
 eTypeClassInvalid = _lldb.eTypeClassInvalid
@@ -2785,7 +2827,7 @@ class SBBreakpoint(_object):
             print('breakpoint location load addr: %s' % hex(bl.GetLoadAddress()))
             print('breakpoint location condition: %s' % hex(bl.GetCondition()))
 
-    and rich comparion methods which allow the API program to use,
+    and rich comparison methods which allow the API program to use,
 
         if aBreakpoint == bBreakpoint:
             ...
@@ -6411,6 +6453,17 @@ class SBFrame(_object):
         return _lldb.SBFrame_GetFunctionName(self, *args)
 
 
+    def GuessLanguage(self):
+        """
+        GuessLanguage(SBFrame self) -> lldb::LanguageType
+
+        Returns the language of the frame's SBFunction, or if there.
+        is no SBFunction, guess the language from the mangled name.
+        .
+        """
+        return _lldb.SBFrame_GuessLanguage(self)
+
+
     def IsInlined(self, *args):
         """
         IsInlined(SBFrame self) -> bool
@@ -7080,6 +7133,11 @@ class SBInstruction(_object):
         return _lldb.SBInstruction_HasDelaySlot(self)
 
 
+    def CanSetBreakpoint(self):
+        """CanSetBreakpoint(SBInstruction self) -> bool"""
+        return _lldb.SBInstruction_CanSetBreakpoint(self)
+
+
     def Print(self, out):
         """Print(SBInstruction self, FILE * out)"""
         return _lldb.SBInstruction_Print(self, out)
@@ -7191,6 +7249,11 @@ class SBInstructionList(_object):
     def GetInstructionAtIndex(self, idx):
         """GetInstructionAtIndex(SBInstructionList self, uint32_t idx) -> SBInstruction"""
         return _lldb.SBInstructionList_GetInstructionAtIndex(self, idx)
+
+
+    def GetInstructionsCount(self, start, end, canSetBreakpoint):
+        """GetInstructionsCount(SBInstructionList self, SBAddress start, SBAddress end, bool canSetBreakpoint) -> size_t"""
+        return _lldb.SBInstructionList_GetInstructionsCount(self, start, end, canSetBreakpoint)
 
 
     def Clear(self):
@@ -7904,7 +7967,7 @@ class SBModule(_object):
             saddr = symbol.GetStartAddress()
             eaddr = symbol.GetEndAddress()
 
-    and rich comparion methods which allow the API program to use,
+    and rich comparison methods which allow the API program to use,
 
         if thisModule == thatModule:
             print('This module is the same as that module')
@@ -9524,6 +9587,11 @@ class SBProcess(_object):
         return _lldb.SBProcess_SaveCore(self, file_name)
 
 
+    def StartTrace(self, options, error):
+        """StartTrace(SBProcess self, SBTraceOptions options, SBError error) -> SBTrace"""
+        return _lldb.SBProcess_StartTrace(self, options, error)
+
+
     def GetMemoryRegionInfo(self, load_addr, region_info):
         """GetMemoryRegionInfo(SBProcess self, lldb::addr_t load_addr, SBMemoryRegionInfo region_info) -> SBError"""
         return _lldb.SBProcess_GetMemoryRegionInfo(self, load_addr, region_info)
@@ -10303,6 +10371,55 @@ class SBStructuredData(_object):
         return _lldb.SBStructuredData_Clear(self)
 
 
+    def GetType(self):
+        """GetType(SBStructuredData self) -> lldb::StructuredDataType"""
+        return _lldb.SBStructuredData_GetType(self)
+
+
+    def GetSize(self):
+        """GetSize(SBStructuredData self) -> size_t"""
+        return _lldb.SBStructuredData_GetSize(self)
+
+
+    def GetValueForKey(self, key):
+        """GetValueForKey(SBStructuredData self, str const * key) -> SBStructuredData"""
+        return _lldb.SBStructuredData_GetValueForKey(self, key)
+
+
+    def GetItemAtIndex(self, idx):
+        """GetItemAtIndex(SBStructuredData self, size_t idx) -> SBStructuredData"""
+        return _lldb.SBStructuredData_GetItemAtIndex(self, idx)
+
+
+    def GetIntegerValue(self, fail_value=0):
+        """
+        GetIntegerValue(SBStructuredData self, uint64_t fail_value=0) -> uint64_t
+        GetIntegerValue(SBStructuredData self) -> uint64_t
+        """
+        return _lldb.SBStructuredData_GetIntegerValue(self, fail_value)
+
+
+    def GetFloatValue(self, fail_value=0.0):
+        """
+        GetFloatValue(SBStructuredData self, double fail_value=0.0) -> double
+        GetFloatValue(SBStructuredData self) -> double
+        """
+        return _lldb.SBStructuredData_GetFloatValue(self, fail_value)
+
+
+    def GetBooleanValue(self, fail_value=False):
+        """
+        GetBooleanValue(SBStructuredData self, bool fail_value=False) -> bool
+        GetBooleanValue(SBStructuredData self) -> bool
+        """
+        return _lldb.SBStructuredData_GetBooleanValue(self, fail_value)
+
+
+    def GetStringValue(self, dst):
+        """GetStringValue(SBStructuredData self, str * dst) -> size_t"""
+        return _lldb.SBStructuredData_GetStringValue(self, dst)
+
+
     def GetAsJSON(self, stream):
         """GetAsJSON(SBStructuredData self, SBStream stream) -> SBError"""
         return _lldb.SBStructuredData_GetAsJSON(self, stream)
@@ -10312,13 +10429,18 @@ class SBStructuredData(_object):
         """GetDescription(SBStructuredData self, SBStream stream) -> SBError"""
         return _lldb.SBStructuredData_GetDescription(self, stream)
 
+
+    def SetFromJSON(self, stream):
+        """SetFromJSON(SBStructuredData self, SBStream stream) -> SBError"""
+        return _lldb.SBStructuredData_SetFromJSON(self, stream)
+
 SBStructuredData_swigregister = _lldb.SBStructuredData_swigregister
 SBStructuredData_swigregister(SBStructuredData)
 
 class SBSymbol(_object):
     """
     Represents the symbol possibly associated with a stack frame.
-    SBModule contains SBSymbol(s). SBSymbol can also be retrived from SBFrame.
+    SBModule contains SBSymbol(s). SBSymbol can also be retrieved from SBFrame.
 
     See also SBModule and SBFrame.
     """
@@ -12073,6 +12195,8 @@ class SBThread(_object):
 
     def GetInfoItemByPathAsString(self, path, strm):
         """
+        GetInfoItemByPathAsString(SBThread self, str const * path, SBStream strm) -> bool
+
         Takes a path string and a SBStream reference as parameters, returns a bool.  
         Collects the thread's 'info' dictionary from the remote system, uses the path
         argument to descend into the dictionary to an item of interest, and prints
@@ -12550,6 +12674,133 @@ class SBThreadPlan(_object):
 
 SBThreadPlan_swigregister = _lldb.SBThreadPlan_swigregister
 SBThreadPlan_swigregister(SBThreadPlan)
+
+class SBTrace(_object):
+    """Proxy of C++ lldb::SBTrace class"""
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, SBTrace, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, SBTrace, name)
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        """__init__(lldb::SBTrace self) -> SBTrace"""
+        this = _lldb.new_SBTrace()
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+
+    def GetTraceData(self, error, buf, offset, thread_id):
+        """GetTraceData(SBTrace self, SBError error, void * buf, size_t offset, lldb::tid_t thread_id) -> size_t"""
+        return _lldb.SBTrace_GetTraceData(self, error, buf, offset, thread_id)
+
+
+    def GetMetaData(self, error, buf, offset, thread_id):
+        """GetMetaData(SBTrace self, SBError error, void * buf, size_t offset, lldb::tid_t thread_id) -> size_t"""
+        return _lldb.SBTrace_GetMetaData(self, error, buf, offset, thread_id)
+
+
+    def StopTrace(self, error, thread_id):
+        """StopTrace(SBTrace self, SBError error, lldb::tid_t thread_id)"""
+        return _lldb.SBTrace_StopTrace(self, error, thread_id)
+
+
+    def GetTraceConfig(self, options, error):
+        """GetTraceConfig(SBTrace self, SBTraceOptions options, SBError error)"""
+        return _lldb.SBTrace_GetTraceConfig(self, options, error)
+
+
+    def GetTraceUID(self):
+        """GetTraceUID(SBTrace self) -> lldb::user_id_t"""
+        return _lldb.SBTrace_GetTraceUID(self)
+
+
+    def __bool__(self): return self.IsValid()
+    def IsValid(self):
+        """IsValid(SBTrace self) -> bool"""
+        return _lldb.SBTrace_IsValid(self)
+
+    __swig_destroy__ = _lldb.delete_SBTrace
+    __del__ = lambda self: None
+SBTrace_swigregister = _lldb.SBTrace_swigregister
+SBTrace_swigregister(SBTrace)
+
+class SBTraceOptions(_object):
+    """Proxy of C++ lldb::SBTraceOptions class"""
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, SBTraceOptions, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, SBTraceOptions, name)
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        """__init__(lldb::SBTraceOptions self) -> SBTraceOptions"""
+        this = _lldb.new_SBTraceOptions()
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+
+    def getType(self):
+        """getType(SBTraceOptions self) -> lldb::TraceType"""
+        return _lldb.SBTraceOptions_getType(self)
+
+
+    def getTraceBufferSize(self):
+        """getTraceBufferSize(SBTraceOptions self) -> uint64_t"""
+        return _lldb.SBTraceOptions_getTraceBufferSize(self)
+
+
+    def getTraceParams(self, error):
+        """getTraceParams(SBTraceOptions self, SBError error) -> SBStructuredData"""
+        return _lldb.SBTraceOptions_getTraceParams(self, error)
+
+
+    def getMetaDataBufferSize(self):
+        """getMetaDataBufferSize(SBTraceOptions self) -> uint64_t"""
+        return _lldb.SBTraceOptions_getMetaDataBufferSize(self)
+
+
+    def setTraceParams(self, params):
+        """setTraceParams(SBTraceOptions self, SBStructuredData params)"""
+        return _lldb.SBTraceOptions_setTraceParams(self, params)
+
+
+    def setType(self, type):
+        """setType(SBTraceOptions self, lldb::TraceType type)"""
+        return _lldb.SBTraceOptions_setType(self, type)
+
+
+    def setTraceBufferSize(self, size):
+        """setTraceBufferSize(SBTraceOptions self, uint64_t size)"""
+        return _lldb.SBTraceOptions_setTraceBufferSize(self, size)
+
+
+    def setMetaDataBufferSize(self, size):
+        """setMetaDataBufferSize(SBTraceOptions self, uint64_t size)"""
+        return _lldb.SBTraceOptions_setMetaDataBufferSize(self, size)
+
+
+    def setThreadID(self, thread_id):
+        """setThreadID(SBTraceOptions self, lldb::tid_t thread_id)"""
+        return _lldb.SBTraceOptions_setThreadID(self, thread_id)
+
+
+    def getThreadID(self):
+        """getThreadID(SBTraceOptions self) -> lldb::tid_t"""
+        return _lldb.SBTraceOptions_getThreadID(self)
+
+
+    def __bool__(self): return self.IsValid()
+    def IsValid(self):
+        """IsValid(SBTraceOptions self) -> bool"""
+        return _lldb.SBTraceOptions_IsValid(self)
+
+    __swig_destroy__ = _lldb.delete_SBTraceOptions
+    __del__ = lambda self: None
+SBTraceOptions_swigregister = _lldb.SBTraceOptions_swigregister
+SBTraceOptions_swigregister(SBTraceOptions)
 
 class SBTypeMember(_object):
     """
