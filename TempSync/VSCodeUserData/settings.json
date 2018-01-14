@@ -74,5 +74,6 @@
     "git.autofetch": false,
     "git.autorefresh": false,
     "git.path": "D:/Dev/PortableGit/bin/git.exe",
-    "git.ignoreMissingGitWarning": true
+    "git.ignoreMissingGitWarning": true,
+    "explorer.confirmDelete": false
 }
