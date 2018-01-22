@@ -30,7 +30,7 @@ def input_with_timeout(timeout):
                 if ord(c) == 13: # enter_key
                     break
                 elif ord(c) >= 32: #space_char
-                    s += c
+                    s += c.decode('utf-8')
             if time() - start_time > timeout:
                 return None
 
@@ -315,15 +315,15 @@ class ConsoleApplication(object):
     def _print(self, *args, **kwargs):
         encoded_args = []
         if sys.version_info[0] >= 3:
-            string_type = str
+            string_type = None
             decoder = "unicode-escape"
         else:
             string_type = unicode
             decoder = "string-escape"
         encoding = sys.stdout.encoding or 'UTF-8'
         for arg in args:
-            if isinstance(arg, string_type):
-                encoded_args.append(arg.encode(encoding, errors='replace').decode(decoder))
+            if string_type and isinstance(arg, string_type):
+                encoded_args.append(arg.encode(encoding, errors='replace').decode(decoder, errors='replace'))
             else:
                 encoded_args.append(arg)
         print(*encoded_args, **kwargs)
