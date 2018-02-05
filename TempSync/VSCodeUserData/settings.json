@@ -75,5 +75,6 @@
     "git.autorefresh": false,
     "git.path": "D:/Dev/PortableGit/bin/git.exe",
     "git.ignoreMissingGitWarning": true,
-    "explorer.confirmDelete": false
+    "explorer.confirmDelete": false,
+    "[objective-cpp]": {}
 }
