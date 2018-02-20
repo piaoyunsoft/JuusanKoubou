@@ -1,23 +1,27 @@
-**margo**
-
-This, and future, versions of GoSublime include a new version of margo that will run side-by-side with the old version until it can be completely replaced.
-
-Nothing should change at this time except the appearance of two new processes (`margo` and `margo.sublime`), some more noise in the console and `{• _ •}` in the status bar.
-
-
 **Donate:**
 
 If you find GoSublime useful and would like to support me and future development of GoSublime,
 please donate via one of the available methods on https://github.com/DisposaBoy/GoSublime#donations
-or reach out to disposaboy@dby.me to discuss other options.
 
 
+**Changes:**
 
+## 18.02.17-2
+	* stop linking sqlite3 to avoid cgo-related compilation errors
 
-GoSublime Changes
------------------
+## 18.02.17-1
+	* fix a compilation error introduced in r18.02.16-1
 
-## 18.01.17
+## 18.02.16-1
+	* The new version of margo is close to being ready for real usage.
+	  If you'd like to test it out, press `ctrl+.`,`ctrl+x` or `cmd+.`,`cmd+x`
+	  to open the extension file and then save it or restart sublime text
+	* Highlights:
+		* less dependence on Python, so development should be a lot easier going forward
+		* it comes with integrated support for GoImports
+		* gocode integration now supports more options like autobuild, showing function params and autocompleting packages that have not been imported
+
+## 18.01.17-1
 	* update gocode
 	* sync the settings when the active view changes to avoid them going out-of-sync when switching projects
 	* add support for exporting env vars into ST.
