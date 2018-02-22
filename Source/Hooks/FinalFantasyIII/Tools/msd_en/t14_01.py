@@ -1,0 +1,18 @@
+items = {
+    0xF43B3: (0xCCCC0101, 'I can't believe it!\nGutsco made off with both horns!\nOh, boy, are we ever in trouble!'),
+    0xF4446: (0xCCCC0101, 'Dwarven Hollows'),
+    0x9CB595: (0xCCCC0101, 'Lali-ho!\nWe're a bit little, but we're in big trouble!'),
+    0x9CB5F9: (0xCCCC0101, 'Lali-ho!\nHumans! Welcome to the Dwarven Hollows!'),
+    0x9D03B5: (0xCCCC0101, 'Lali-ho!\nWarriors of the Light! You've come back!'),
+    0x9D03B6: (0xCCCC0101, 'Warriors of the Light, we've been had again!'),
+    0x9D0419: (0xCCCC0101, 'Lali-ho!\nThank you, Warriors of the Light!'),
+    0x9D51D5: (0xCCCC0101, 'Lali-ho!\nWarriors of the Light! You've come back!'),
+    0x9D5239: (0xCCCC0101, 'Lali-ho!\nThank you, Warriors of the Light!'),
+    0x135E855: (0xCCCC0101, 'Warriors of the Light...\nTokkul needs you...'),
+    0x135E856: (0xCCCC0101, '  %shuyaku3%\nWhat's going on? Are you all right?'),
+    0x135E857: (0xCCCC0101, 'Our village... We didn't have anything more\nfor them to take... They're going to burn down\nTokkul...'),
+    0x135E858: (0xCCCC0101, 'Please, you must stop them...'),
+    0x135E859: (0xCCCC0101, '  %shuyaku1%\nWhat have they done...!?'),
+    0x135E85A: (0xCCCC0101, 'Hein...has a way to change his weak point...'),
+    0x135E85B: (0xCCCC0101, 'Only a scholar has the power...to see through\nhis deception...\nAaagh...'),
+}

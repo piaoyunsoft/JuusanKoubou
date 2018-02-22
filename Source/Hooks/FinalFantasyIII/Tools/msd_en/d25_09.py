@@ -1,0 +1,16 @@
+items = {
+    0x13C5159: (0xCCCC0101, 'Hah hah hah!'),
+    0x13C515A: (0xCCCC0101, 'Fools! Those who see their reflections in that\nmirror become afflicted by the curse of the\nfive wyrms!'),
+    0x13C515C: (0xCCCC0101, '  %shuyaku1%\nI...I can't move!'),
+    0x13C515D: (0xCCCC0101, 'Do not fear!'),
+    0x13C515E: (0xCCCC0101, '  %shuyaku1%\nDoga...? Is that you!?'),
+    0x13C515F: (0xCCCC0101, 'I told you that our souls are everlasting, did I\nnot?'),
+    0x13C5160: (0xCCCC0101, 'Only five souls who possess hearts of pure\nlight may break the curse of the five wyrms...'),
+    0x13C5161: (0xCCCC0101, 'I will go forth and find the five!\nDo not lose hope!'),
+    0x13C5162: (0xCCCC0101, 'I will be right back!'),
+    0x13C5221: (0xCCCC0101, '  Desch\n%shuyaku1%! %shuyaku2%!\n%shuyaku3%! %shuyaku4%!'),
+    0x13C5222: (0xCCCC0101, '  Princess Sara\nWe will hold off the wyrms' power!\nQuickly! Into the mirror!'),
+    0x13C5223: (0xCCCC0101, '  Cid\nYou must stop the darkness from covering\nthis world again!'),
+    0x13C5224: (0xCCCC0101, '  %shuyaku1%\nThanks, everyone!'),
+    0x13C5225: (0xCCCC0101, 'Come on, let's go!'),
+}

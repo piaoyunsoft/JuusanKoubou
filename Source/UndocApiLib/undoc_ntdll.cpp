@@ -20,6 +20,11 @@ float __cdecl __floor(float)
     return 0;
 }
 
+int __cdecl strncmp(char const* _Str1, char const* _Str2, size_t _MaxCount)
+{
+    return 0;
+}
+
 int __cdecl _strnicmp(const char*, const char *, size_t)
 {
     return 0;

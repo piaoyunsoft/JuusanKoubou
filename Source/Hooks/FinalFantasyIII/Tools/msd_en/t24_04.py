@@ -1,0 +1,16 @@
+items = {
+    0xF43D8: (0xCCCC0101, 'Gigameth's power is darkness itself. Darkness\ncorrupts people's hearts... When you lose hope,\ndarkness comes in to fill the void...'),
+    0xF43D9: (0xCCCC0101, 'King Alus never shows his pain, but he\nlost his mother when he was young, and now\nhis father...'),
+    0xA0AF29: (0xCCCC0101, 'With a timbre reaching the world of dream\nNoah's Lute lies in a silence extreme\nIn the Temple of Time, as it would seem.'),
+    0xA0AF8D: (0xCCCC0101, 'Beneath the sea, under the waves that mourn\nIs the temple sundered by the gods' scorn\nSouth of Saronia, between the two horns.'),
+    0xA0AFF1: (0xCCCC0101, 'There is a secret passage to the treasure\nroom on the first floor of this tower.'),
+    0xA0B11D: (0xCCCC0101, '  King Alus\nI must not let my father down... Not only must I\nbring peace to Saronia...'),
+    0xA0B11E: (0xCCCC0101, 'but the whole world as well. There is much work\nto do, and there will be time to mourn later.'),
+    0xA0B11F: (0xCCCC0101, 'Please, feel free to take anything in Saronia\nthat may help you on your journey. That is the\nleast we can do.'),
+    0x13C51CB: (0xCCCC0101, '  Doga\nRuler of Saronia! %shuyaku2% and his friends need your\nhelp!'),
+    0x13C51CC: (0xCCCC0101, '  King Alus\n%shuyaku2% is in trouble?\nThen I will go with you!'),
+    0x13CA043: (0xCCCC0101, '  %shuyaku2%\nThank you for your help, Prince...\nI mean, King Alus!'),
+    0x13CA044: (0xCCCC0101, '  King Alus\nNo, it is I who must thank you. It is the power\nof light within you that saved the world.'),
+    0x13CA045: (0xCCCC0101, 'Thank you, Warriors of the Light!\nI will strive to be as strong as you in\nserving my people.'),
+    0x13CA046: (0xCCCC0101, 'Thank you, and farewell!'),
+}

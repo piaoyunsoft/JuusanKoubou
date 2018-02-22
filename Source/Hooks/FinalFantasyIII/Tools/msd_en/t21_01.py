@@ -1,0 +1,18 @@
+items = {
+    0xF4259: (0xCCCC0101, '  %lead_player_name%\nGotcha, chocobo!'),
+    0xF4259: (0xCCCC0101, '  %lead_player_name%\nGotcha, chocobo!'),
+    0xF43C9: (0xCCCC0101, 'Spears and lances are very effective against\nflying enemies.'),
+    0xF43DA: (0xCCCC0101, 'When Saronia was a military nation, they were\ntrying to take the secret of the dark blade from\nits masters in the mountains to the west.'),
+    0xF43EF: (0xCCCC0101, 'Peace has come again to Saronia, thanks\nto you!'),
+    0xF43F5: (0xCCCC0101, 'As long as I live, Saronia shall never\nbecome a battlefield!'),
+    0xF444D: (0xCCCC0101, 'Southeastern Saronia'),
+    0xA03805: (0xCCCC0101, 'You're going to climb the Dragon Spire?\nAre you mad!? That place is crawling with\nmonsters!!!'),
+    0xA03805: (0xCCCC0101, 'You're going to climb the Dragon Spire?\nAre you mad!? That place is crawling with\nmonsters!!!'),
+    0xA03806: (0xCCCC0101, 'Peace has come to Saronia again, thanks to\nyour brave deeds!'),
+    0xA03869: (0xCCCC0101, 'The tower in the middle of this district is\ncalled the Dragon Spire. The dragoons' greatest\ntreasure is fabled to be kept at the top.'),
+    0xA038CD: (0xCCCC0101, 'I hear that Prince Alus was expelled from the\ncastle...'),
+    0xA03931: (0xCCCC0101, 'Saronia will burn itself to the ground if this\nwar lasts any longer...'),
+    0x1D16505: (0xCCCC0101, '  Prince Alus\nThis is Southeastern Saronia. The tower at\nthe center is called the Dragon Spire.'),
+    0x1D16506: (0xCCCC0101, 'It was built by dragoons, also known as\ndragon knights.'),
+    0x1D16507: (0xCCCC0101, '  %shuyaku4%\nDragoons, you say...'),
+}

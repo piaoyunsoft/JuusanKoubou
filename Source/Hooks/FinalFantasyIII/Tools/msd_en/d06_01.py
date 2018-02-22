@@ -1,0 +1,15 @@
+items = {
+    0xF446C: (0xCCCC0101, 'Nepto Temple'),
+    0x133C575: (0xCCCC0101, '  %shuyaku1%\nA statue of the Nepto Dragon...?\nHey... One of its eyes is missing.'),
+    0x133C576: (0xCCCC0101, ' %shuyaku2%\nIt looks like this hole goes on for a bit. We could\nprobably squeeze in there if we used Mini.'),
+    0x133C6A1: (0xCCCC0101, '  You put the missing eye back in its socket.'),
+    0x133C6A2: (0xCCCC0101, '  You have done well, Warriors of the Light.'),
+    0x133C6A3: (0xCCCC0101, '  I am the Nepto Dragon, guardian of the\n  seas. I thank you for returning my\n  missing eye.'),
+    0x133C6A4: (0xCCCC0101, '  The eye is more than a simple gem--it is my\n  soul. Without it, my physical manifestation, the\n  dragon, could not be controlled.'),
+    0x133C6A5: (0xCCCC0101, '  Now that I am whole once more, I may rest in\n  peace and watch over these waters...'),
+    0x133C6A6: (0xCCCC0101, '  However...the water itself has lost its light.'),
+    0x133C6A7: (0xCCCC0101, '  Someone created the great earthquake, and\n  the light was pulled into the depths of the\n  nether...'),
+    0x133C6AA: (0xCCCC0101, 'Warriors of the Light, I will bestow upon you the\nFang of Water. It will infuse you with powers\nthat will allow you to overcome new challenges.'),
+    0x133C6AB: (0xCCCC0101, 'Now you must go forth, and recover the light...'),
+    0x133C6AC: (0xCCCC0101, '  Obtained Fang of Water.\n  The Nepto Dragon falls into a deep slumber...'),
+}

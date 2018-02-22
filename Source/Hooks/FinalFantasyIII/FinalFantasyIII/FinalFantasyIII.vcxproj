@@ -19,12 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Battle.h" />
     <ClInclude Include="FF3.h" />
     <ClInclude Include="Offset.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FF3.cpp" />
+    <ClCompile Include="gl.cpp" />
     <ClCompile Include="i18n.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="SaveData.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CA125FD6-82A1-450B-9C82-51BC54C59CDA}</ProjectGuid>
@@ -135,7 +139,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>E:\Game\Steam\steamapps\common\Final Fantasy III\FF3.dll</OutputFile>
-      <AdditionalDependencies>SDL2_ttf.lib;libiconv.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2_ttf.lib;libiconv.lib;Opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

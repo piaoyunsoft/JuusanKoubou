@@ -1,0 +1,15 @@
+items = {
+    0x1D27675: (0xCCCC0101, '@%shuyaku2%\nu悭킩Ȃ\n@牜֐i߂łˁcv'),
+    0x1D27676: (0xCCCC0101, '@%shuyaku3%\nu{pƂ͊֌WȂꏊǁc\n@h[K̊ق炻ȂɗĂȂˁv'),
+    0x1D27677: (0xCCCC0101, '@%shuyaku1%\nuh[K󕨂łBĂ񂶂ȂH\n@sĂ݂鉿l肻Iv'),
+    0x1D27678: (0xCCCC0101, '@%shuyaku4%\nuch[KɎĂ񂶂ȂHv'),
+    0x1D27679: (0xCCCC0101, '@%shuyaku1%\nulIv'),
+    0x1D276D9: (0xCCCC0101, '@%shuyaku2%\nu̓h[K̑\n@͂Ȗ@ςłˁIv'),
+    0x1D276DA: (0xCCCC0101, '@%shuyaku4%\nu蕨ꂾ͂Ȃ@Uf\n@Ƌ@Ă̂낤cv'),
+    0x1D276DB: (0xCCCC0101, '@%shuyaku1%\nułȂc@񂶂Ȃc\n@̐mɂ炢^_ŕĂقv'),
+    0x1D276DC: (0xCCCC0101, '@%shuyaku3%\nuq񂽂ɂĐ̂\n@ÂĂႢȂv'),
+    0x1D2EBA5: (0xCCCC0101, '@%shuyaku3%\nuTjA̓c@{p̊Cc\n@̋߂Ɏ̐_a͂ˁv'),
+    0x1D2EBA6: (0xCCCC0101, '@%shuyaku1%\numÃ[gT񂾂ȁc\n@Ȃ@[gĉHv'),
+    0x1D2EBA7: (0xCCCC0101, '@%shuyaku2%\nuۂ`M^[݂Ȍy킳\n@ā@F炩񂾁v'),
+    0x1D2EBA8: (0xCCCC0101, '@%shuyaku1%\nuӁ`cv'),
+}

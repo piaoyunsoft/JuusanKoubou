@@ -127,3 +127,6 @@ Source/LocaleEmulator/LocaleEmulator/LoaderDll.dll
 /TempSync/AtomConfig/packages
 /Source/Falcom/Decompiler2/.vscode/.ropeproject
 /Source/Project/xd-*/
+/Source/Hooks/FinalFantasyIII/*/Release
+/Source/Hooks/FinalFantasyIII/Release
+/Source/Hooks/FinalFantasyIII/*.opendb

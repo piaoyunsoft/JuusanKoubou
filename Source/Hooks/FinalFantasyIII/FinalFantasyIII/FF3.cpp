@@ -25,13 +25,32 @@ BOOL Initialize(PVOID BaseAddress)
     PATCH_MEMORY_DATA p[] =
     {
         MemoryPatchVa((ULONG64)FF3_GetModuleFileNameA,  sizeof(&FF3_GetModuleFileNameA),    IATLookupRoutineByHash(BaseAddress, KERNEL32_GetModuleFileNameA)),
+        MemoryPatchVa((ULONG64)FF3_strncmp,             sizeof(&FF3_strncmp),               IATLookupRoutineByHash(BaseAddress, HashAPI("strncmp"))),
         MemoryPatchVa((ULONG64)FF3_TTF_OpenFont,        sizeof(&FF3_TTF_OpenFont),          IATLookupRoutineByEntryNoFix(BaseAddress, TTF_OpenFont)),
-        MemoryPatchVa((ULONG64)ff3_libiconv_open,       sizeof(&ff3_libiconv_open),         IATLookupRoutineByEntryNoFix(BaseAddress, libiconv_open)),
+        MemoryPatchVa((ULONG64)FF3_libiconv_open,       sizeof(&FF3_libiconv_open),         IATLookupRoutineByEntryNoFix(BaseAddress, libiconv_open)),
 
-        FunctionJumpRva(FF3::GetCurrentLangID, FF3_NakedGetCurrentLangID),
+        MemoryPatchRva(0x74FFull,       2,  FF3::CheckItemCountInShop),
+        MemoryPatchRva(0x745EFFull,     3,  FF3::CheckItemCountInShop2),
+        MemoryPatchRva(0xFFull,         4,  FF3::CheckItemCountInBuy),
+        MemoryPatchRva(0xEBull,         1,  FF3::CheckItemCountInBuyConfirm),
+        MemoryPatchRva(0xEBull,         1,  FF3::CheckItemCountInBuyConfirm4),
+
+        // MemoryPatchRva(0x75FFull,       2,  FF3::CheckItemCountInBuyConfirm1),
+        // MemoryPatchRva(0xFFull,         1,  FF3::CheckItemCountInBuyConfirm2),
+        // MemoryPatchRva(0xFFull,         1,  FF3::CheckItemCountInBuyConfirm3),
+
+        FunctionJumpRva(FF3::GetCurrentLocaleID,    FF3_NakedGetCurrentLocaleID),
+        FunctionJumpRva(FF3::VerifySaveData,        FF3_VerifySaveData),
+        FunctionJumpRva(FF3::glResetMatrix,         FF3_glResetMatrix),
+        FunctionJumpRva(FF3::SetItemCountInBattle,  FF3_SetItemCountInBattle,   &Stub_FF3_SetItemCountInBattle),
+        FunctionCallRva(FF3::SetItemCountInBag,     FF3_SetItemCountInBag),
+        FunctionCallRva(FF3::SetItemCountInSort,    FF3_SetItemCountInSort),
+        // FunctionJumpRva(FF3::RenderString,          FF3_RenderString,   &StubRenderString),
     };
 
     PatchMemory(p, countof(p), BaseAddress);
+
+    //AllocConsole();
 
     return TRUE;
 }

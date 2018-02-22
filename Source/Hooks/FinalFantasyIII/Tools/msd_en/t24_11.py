@@ -1,0 +1,18 @@
+items = {
+    0xA0AD35: (0xCCCC0101, 'We have no choice but to fight!\nIf we lose, we'll be executed!'),
+    0xA0AD35: (0xCCCC0101, 'We have no choice but to fight!\nIf we lose, we'll be executed!'),
+    0xA0AD36: (0xCCCC0101, 'I thank you for ending that senseless\nmassacre!'),
+    0xA0AD36: (0xCCCC0101, 'I thank you for ending that senseless\nmassacre!'),
+    0xA0AD99: (0xCCCC0101, 'Why must we fight amongst ourselves!?\nWhy must we fight against friends!?'),
+    0xA0AD99: (0xCCCC0101, 'Why must we fight amongst ourselves!?\nWhy must we fight against friends!?'),
+    0xA0AD9A: (0xCCCC0101, 'I do not wish to fight my allies ever again...'),
+    0xA0AD9A: (0xCCCC0101, 'I do not wish to fight my allies ever again...'),
+    0xA0ADFD: (0xCCCC0101, 'Advance! Fight! Those who do not fight will\nbe charged with treason! And you all know\nwhat we do to traitors!'),
+    0xA0ADFD: (0xCCCC0101, 'Advance! Fight! Those who do not fight will\nbe charged with treason! And you all know\nwhat we do to traitors!'),
+    0xA0ADFE: (0xCCCC0101, 'This can never happen again!\nWe will defend Saronia with our lives!'),
+    0xA0ADFE: (0xCCCC0101, 'This can never happen again!\nWe will defend Saronia with our lives!'),
+    0x138A775: (0xCCCC0101, '  %shuyaku1%\nUngh... Everyone all right?\nWhat happened?'),
+    0x138A776: (0xCCCC0101, '  %shuyaku4%\nObviously, a cannon shell disabled our engine.\nBut...I do not know why they would fire at us.'),
+    0x138A777: (0xCCCC0101, '  %shuyaku2%\nThe Enterprise is in pieces...\nWhat are we going to do now?'),
+    0x138A778: (0xCCCC0101, '  %shuyaku4%\nThis wind... It carries the sound and scent\nof war... Best be on our guards.'),
+}

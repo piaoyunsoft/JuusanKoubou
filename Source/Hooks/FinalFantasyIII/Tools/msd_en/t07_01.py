@@ -1,0 +1,15 @@
+items = {
+    0xF438D: (0xCCCC0101, 'The Nepto Dragon is the protector of the\nsea. Now that its anger's been appeased,\nit looks over us and our ships.'),
+    0xF438E: (0xCCCC0101, 'Monsters that live in the sea are weak to\nlightning! You know what they say about\nswimming during a thunderstorm!'),
+    0xF438F: (0xCCCC0101, 'Most hammers that vikings can use are\nimbued with the power of lightning, so we\nare very effective against sea monsters!'),
+    0xF4390: (0xCCCC0101, 'The great serpent, ruler of the sea, is said\nto be sleeping somewhere in the world...'),
+    0xF443E: (0xCCCC0101, 'Vikings' Cove'),
+    0x9B07E5: (0xCCCC0101, 'Yarr! Vikings, we are! The kings of the high seas!'),
+    0x9B07E6: (0xCCCC0101, '...Or we used to be. The earthquake woke a great\nsea dragon from its sleep, and it wasn't too happy\nto see us. It managed to sink all our ships!'),
+    0x9B07E7: (0xCCCC0101, 'Well...all except the Enterprise. But we can't slay\na sea dragon with only one ship!'),
+    0x9B0849: (0xCCCC0101, 'It's not the boss's fault... There's nothing he can\ndo to rid us of that sea dragon...'),
+    0x9B08AD: (0xCCCC0101, 'Lemme sleep, I'm dreaming of sailing...'),
+    0x9B0911: (0xCCCC0101, 'What can I do but swig this down? What's a\nviking without his ship, eh!?'),
+    0x9B0A3D: (0xCCCC0101, 'You'll find the Nepto Temple at the end of the\ncape. Pops knows everything about that place,\nif you're interested.'),
+    0x9B5731: (0xCCCC0101, 'Now I can dream of flying...'),
+}

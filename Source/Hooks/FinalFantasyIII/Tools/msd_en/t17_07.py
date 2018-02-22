@@ -1,0 +1,16 @@
+items = {
+    0x9F7BBD: (0xCCCC0101, '  Gill\nGood luck on your journey!'),
+    0x13796CD: (0xCCCC0101, '  Gill\nWhozat? Whaddaya want?'),
+    0x13796CE: (0xCCCC0101, '  %shuyaku1%\nWe need to get into the sewers. We're looking\nfor some Levigrass Shoes.'),
+    0x13796CF: (0xCCCC0101, '  Gill\nYou got a death wish or somethin'? That place\nis Monster Central! And it smells bad, too!'),
+    0x13796D0: (0xCCCC0101, '  %shuyaku2%\nBut we need Levigrass Shoes to find the fourth\ncrystal...'),
+    0x13796D1: (0xCCCC0101, '  Gill\nCrystal...? You... Are you the four warriors of\nlegend...?'),
+    0x13796D2: (0xCCCC0101, 'What!? The four warriors!?'),
+    0x13796D3: (0xCCCC0101, 'But we are the chosen ones!'),
+    0x13796D4: (0xCCCC0101, 'Those four claim they are, too!'),
+    0x13796D5: (0xCCCC0101, 'They say they're going into the sewers...'),
+    0x13796D6: (0xCCCC0101, 'Then we'll beat them to the punch!'),
+    0x13796D7: (0xCCCC0101, '"Go go go!"\n"To the sewers, gentlemen!"\n"Tally-hoooo!"'),
+    0x13796D8: (0xCCCC0101, '  Gill\nI'll show you the way into the sewers myself!\nFollow me!'),
+    0x13796DB: (0xCCCC0101, '  Gill\nI'm Gill, the elder of this town. Have you met the\n"heroes" of Amur? Look for a group of old men.'),
+}

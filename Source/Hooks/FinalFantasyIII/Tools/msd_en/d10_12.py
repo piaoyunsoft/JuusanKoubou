@@ -1,0 +1,15 @@
+items = {
+    0x13637A1: (0xCCCC0101, '  Hein\nAhh...the power of darkness is a thing\nof beauty, a black tapestry of chaos!'),
+    0x13637A2: (0xCCCC0101, 'A tapestry on which I shall paint an\nall-encompassing nocturne!'),
+    0x13637A3: (0xCCCC0101, 'With this fortress, Argus's soldiers, and\nthe power of darkness... I will rule the world!'),
+    0x13637A4: (0xCCCC0101, '  Hein\nTime to die!'),
+    0x1365D85: (0xCCCC0101, '  %shuyaku1%\nWhoa... An earthquake?'),
+    0x1365D86: (0xCCCC0101, '...Thank you...\n...Warriors of the Light...'),
+    0x1365D87: (0xCCCC0101, '  %shuyaku4%\nThe walls...they speak!'),
+    0x1365D88: (0xCCCC0101, 'I am the Elder Tree of the Living Woods.\nHein had put a curse on me to do his bidding.'),
+    0x1365D89: (0xCCCC0101, 'But you have freed me from his bonds.\nThank you again, Warriors of the Light.'),
+    0x1365D8A: (0xCCCC0101, 'I will now free the people held captive within\nme, and return them to where they belong. Then\nI will go back to the Living Woods once again.'),
+    0x1365D8B: (0xCCCC0101, 'Thank you!'),
+    0x1365D8C: (0xCCCC0101, 'Thank you!!!'),
+    0x1365D8D: (0xCCCC0101, 'Now it is time to return...'),
+}

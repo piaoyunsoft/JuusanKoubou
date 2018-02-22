@@ -1,0 +1,16 @@
+items = {
+    0x139B8E5: (0xCCCC0101, '  Doga\n*Cough* *Cough*'),
+    0x139B8E6: (0xCCCC0101, '  Doga\nWe must hurry... My time has almost come...'),
+    0x139B8E7: (0xCCCC0101, 'I will cast a spell on your ship so that it may\ntravel underwater...'),
+    0x139B8E8: (0xCCCC0101, 'Zehapido Muwu Kaine!'),
+    0x139B8E9: (0xCCCC0101, '  The Nautilus can now travel underwater!'),
+    0x139B8EA: (0xCCCC0101, '  Doga\nHead south from Saronia...'),
+    0x139B8EB: (0xCCCC0101, 'The Temple of Time lies between the pillars of\nCape Twin Horn. In the temple is where you will\nfind Noah's Lute.'),
+    0x139B8EC: (0xCCCC0101, '  %shuyaku1%\nWhat does Noah's Lute do?'),
+    0x139B8ED: (0xCCCC0101, '  Doga\nIt is a magic lute, whose timbre will reach even\ninto the world of dream.'),
+    0x139B8EE: (0xCCCC0101, 'You must use it to call Unei back from the\nworld of dream.'),
+    0x139B8EF: (0xCCCC0101, 'I will now use the circle to enter the rift between\ndimensions...and find the key to Eureka.'),
+    0x139B8F0: (0xCCCC0101, 'Your task is to wake Unei and obtain the ancient\nship known as the Invincible!'),
+    0x139B8F1: (0xCCCC0101, 'You must hurry now... I will teleport you\noutside.'),
+    0x139B8F2: (0xCCCC0101, 'Give my regards to Unei. Farewell, Warriors of\nthe Light! We will meet again!'),
+}

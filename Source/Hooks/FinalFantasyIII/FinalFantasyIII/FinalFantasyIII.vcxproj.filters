@@ -3,9 +3,13 @@
   <ItemGroup>
     <ClInclude Include="Offset.h" />
     <ClInclude Include="FF3.h" />
+    <ClInclude Include="Battle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FF3.cpp" />
     <ClCompile Include="i18n.cpp" />
+    <ClCompile Include="SaveData.cpp" />
+    <ClCompile Include="gl.cpp" />
+    <ClCompile Include="Item.cpp" />
   </ItemGroup>
 </Project>

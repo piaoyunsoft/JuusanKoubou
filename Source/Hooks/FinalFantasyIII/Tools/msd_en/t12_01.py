@@ -1,0 +1,18 @@
+items = {
+    0xF42D6: (0xCCCC0101, '  The door is locked.'),
+    0xF42D6: (0xCCCC0101, '  The door is locked.'),
+    0xF42D7: (0xCCCC0101, '  You unlock the door with your\n  thief ability!'),
+    0xF42D7: (0xCCCC0101, '  You unlock the door with your\n  thief ability!'),
+    0xF42D8: (0xCCCC0101, '  Unlocked!'),
+    0xF42D8: (0xCCCC0101, '  Unlocked!'),
+    0xF43A0: (0xCCCC0101, 'I wonder what is beyond the edges of this\ncontinent... All we can see from here are\nbanks of clouds.'),
+    0xF43A1: (0xCCCC0101, 'You managed to defeat Hein's Barrier Shift,\ndid you? Heh heh, you proved that you need\nas much brain as brawn to be victorious!'),
+    0xF43A2: (0xCCCC0101, 'The king and Cid are old friends. I hear\nthey used to do airship research together.'),
+    0xF43A3: (0xCCCC0101, 'Hein used his prowess in magic to gain the\nking's trust. Who would've thought he was a\nmonster in a man's guise...?'),
+    0xF43A4: (0xCCCC0101, 'Even though we were under Hein's control,\nthe things we did to Tokkul are unforgivable...\nWe must help undo what we have done.'),
+    0xF43A5: (0xCCCC0101, 'A young man passed this way a few years\nago, mumbling something about his duty\nand destiny... I wonder what happened to him.'),
+    0xF4443: (0xCCCC0101, 'Castle Argus'),
+    0x1CD4655: (0xCCCC0101, '  Desch\n...There's no one here.'),
+    0x1CD4656: (0xCCCC0101, '  %shuyaku4%\nA very unwise strategic decision.'),
+    0x1CD4657: (0xCCCC0101, '  %shuyaku3%\nMaybe they're out pillaging villages like\ngood soldiers of doom?'),
+}
