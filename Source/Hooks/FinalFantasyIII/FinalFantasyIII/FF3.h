@@ -79,12 +79,27 @@ FF3_strncmp(
 
 ULONG FF3_NakedGetCurrentLocaleID();
 
-BOOL CDECL FF3_VerifySaveData(/* PVOID Begin @ ecx, PVOID End @ edx */ ULONG ExpectedCheckSum);
-
 VOID NTAPI FF3_glResetMatrix();
 
 extern VOID (FASTCALL *StubRenderString)(PVOID This, PVOID Dummy, PCSTR Text, ULONG p1, ULONG p2);
 VOID FASTCALL FF3_RenderString(PVOID This, PVOID Dummy, PCSTR Text, ULONG p1, ULONG p2);
+
+/*++
+
+    SaveData
+
+--*/
+
+BOOL CDECL FF3_VerifySaveData(/* PVOID Begin @ ecx, PVOID End @ edx */ ULONG ExpectedCheckSum);
+HRESULT
+NTAPI
+FF3_SHGetFolderPathA(
+    HWND    hwnd,
+    int     csidl,
+    HANDLE  Token,
+    DWORD   Flags,
+    PSTR    Path
+);
 
 
 /*++

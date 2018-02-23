@@ -1,7 +1,6 @@
 #pragma comment(linker, "/ENTRY:DllMain")
 #pragma comment(linker, "/SECTION:.text,ERW /MERGE:.rdata=.text /MERGE:.data=.text /MERGE:.text1=.text /SECTION:.idata,ERW")
 #pragma comment(linker, "/SECTION:.Asuna,ERW /MERGE:.text=.Asuna")
-#pragma comment(linker, "/EXPORT:MessageBoxA=USER32.MessageBoxA")
 
 #include "FF3.h"
 #include "ml.cpp"
@@ -16,6 +15,9 @@ BOOL Initialize(PVOID BaseAddress)
     using namespace Mp;
 
     LdrDisableThreadCalloutsForDll(BaseAddress);
+
+    BOOL IsLauncher = ImageNtHeaders(Ps::CurrentPeb()->ImageBaseAddress)->FileHeader.TimeDateStamp != 0x5385F4FD;
+
     ml::MlInitialize();
 
     SetProcessDPIAware();
@@ -24,7 +26,9 @@ BOOL Initialize(PVOID BaseAddress)
 
     PATCH_MEMORY_DATA p[] =
     {
+        MemoryPatchVa((ULONG64)FF3_SHGetFolderPathA,    sizeof(&FF3_SHGetFolderPathA),      IATLookupRoutineByHash(BaseAddress, HashAPI("SHGetFolderPathA"))),
         MemoryPatchVa((ULONG64)FF3_GetModuleFileNameA,  sizeof(&FF3_GetModuleFileNameA),    IATLookupRoutineByHash(BaseAddress, KERNEL32_GetModuleFileNameA)),
+
         MemoryPatchVa((ULONG64)FF3_strncmp,             sizeof(&FF3_strncmp),               IATLookupRoutineByHash(BaseAddress, HashAPI("strncmp"))),
         MemoryPatchVa((ULONG64)FF3_TTF_OpenFont,        sizeof(&FF3_TTF_OpenFont),          IATLookupRoutineByEntryNoFix(BaseAddress, TTF_OpenFont)),
         MemoryPatchVa((ULONG64)FF3_libiconv_open,       sizeof(&FF3_libiconv_open),         IATLookupRoutineByEntryNoFix(BaseAddress, libiconv_open)),
@@ -48,7 +52,7 @@ BOOL Initialize(PVOID BaseAddress)
         // FunctionJumpRva(FF3::RenderString,          FF3_RenderString,   &StubRenderString),
     };
 
-    PatchMemory(p, countof(p), BaseAddress);
+    PatchMemory(p, IsLauncher ? 1 : countof(p), BaseAddress);
 
     //AllocConsole();
 

@@ -1,23 +1,5 @@
 #include "FF3.h"
 
-ULONG
-NTAPI
-FF3_GetModuleFileNameA(
-    PVOID   Module,
-    PSTR    Filename,
-    ULONG   Size
-)
-{
-    PLDR_MODULE Exe;
-    ULONG_PTR SizeInBytes;
-
-    Exe = Ldr::FindLdrModuleByHandle(nullptr);
-    Nls::UnicodeToAnsi(Filename, Size, Exe->FullDllName.Buffer, Exe->FullDllName.Length / sizeof(Exe->FullDllName.Buffer[0]), &SizeInBytes);
-    strcpy(findnamea(Filename), "FF3_Win32.exe");
-
-    return StrLengthA(Filename);
-}
-
 ULONG FF3_GetCurrentLocaleID()
 {
     ULONG LocaleID;

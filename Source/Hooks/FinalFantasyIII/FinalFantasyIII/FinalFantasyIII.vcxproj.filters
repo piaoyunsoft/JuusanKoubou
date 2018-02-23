@@ -11,5 +11,9 @@
     <ClCompile Include="SaveData.cpp" />
     <ClCompile Include="gl.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="steam_api.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FinalFantasyIII.def" />
   </ItemGroup>
 </Project>

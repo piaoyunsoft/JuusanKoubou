@@ -29,6 +29,10 @@
     <ClCompile Include="i18n.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="SaveData.cpp" />
+    <ClCompile Include="steam_api.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FinalFantasyIII.def" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CA125FD6-82A1-450B-9C82-51BC54C59CDA}</ProjectGuid>
@@ -140,6 +144,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>E:\Game\Steam\steamapps\common\Final Fantasy III\FF3.dll</OutputFile>
       <AdditionalDependencies>SDL2_ttf.lib;libiconv.lib;Opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>FinalFantasyIII.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
