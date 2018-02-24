@@ -3,6 +3,7 @@
 #pragma comment(linker, "/SECTION:.Asuna,ERW /MERGE:.text=.Asuna")
 
 #include "FF3.h"
+#include "Battle.h"
 #include "ml.cpp"
 
 BOOL UnInitialize(PVOID BaseAddress)
@@ -21,8 +22,13 @@ BOOL Initialize(PVOID BaseAddress)
     ml::MlInitialize();
 
     SetProcessDPIAware();
+    BattleInitialize();
 
     BaseAddress = Ldr::GetExeModuleHandle();
+
+    ULONG64 damage_2e0_start = (ULONG64)(DamageNumberBuffer + 4 + DamageNumberSize * (NumberCount - 1));
+    ULONG64 damage_2e0_end   = damage_2e0_start + DamageNumberBufferSize;
+    ULONG64 damage_size      = (ULONG64)(DamageNumberSize * NumberCount + 4);
 
     PATCH_MEMORY_DATA p[] =
     {
@@ -33,11 +39,57 @@ BOOL Initialize(PVOID BaseAddress)
         MemoryPatchVa((ULONG64)FF3_TTF_OpenFont,        sizeof(&FF3_TTF_OpenFont),          IATLookupRoutineByEntryNoFix(BaseAddress, TTF_OpenFont)),
         MemoryPatchVa((ULONG64)FF3_libiconv_open,       sizeof(&FF3_libiconv_open),         IATLookupRoutineByEntryNoFix(BaseAddress, libiconv_open)),
 
+        // item max num
         MemoryPatchRva(0x74FFull,       2,  FF3::CheckItemCountInShop),
         MemoryPatchRva(0x745EFFull,     3,  FF3::CheckItemCountInShop2),
         MemoryPatchRva(0xFFull,         4,  FF3::CheckItemCountInBuy),
         MemoryPatchRva(0xEBull,         1,  FF3::CheckItemCountInBuyConfirm),
         MemoryPatchRva(0xEBull,         1,  FF3::CheckItemCountInBuyConfirm4),
+
+        // battle damage
+        FunctionJumpRva(FF3::DynamicConstructor,    DynamicConstructor,         &StubDynamicConstructor),
+        FunctionJumpRva(FF3::DynamicDestructor,     DynamicDestructor,          &StubDynamicDestructor),
+        FunctionCallRva(FF3::GetDamageNumberBuffer, GetDamageNumberBuffer),
+
+        MemoryPatchVa((ULONG64)DamageNumberBuffer,     sizeof(DamageNumberBuffer),        0x4570C4),
+        MemoryPatchVa((ULONG64)DamageNumberBuffer,     sizeof(DamageNumberBuffer),        0x4571D4),
+
+        MemoryPatchRva(99999ull,            4,  0x428644 - FF3::ImageBase),
+        MemoryPatchRva(10000ull,            4,  0x428651 - FF3::ImageBase),
+        MemoryPatchRva((ULONG64)NumberCount,1,  0x4287A2 - FF3::ImageBase),
+        MemoryPatchRva((ULONG64)NumberCount,1,  0x4287C6 - FF3::ImageBase),
+
+        MemoryPatchRva(damage_size,         4,  0x429FFF - FF3::ImageBase),
+        MemoryPatchRva(damage_size,         4,  0x429F29 - FF3::ImageBase),
+        MemoryPatchRva(damage_size,         4,  0x42AF18 - FF3::ImageBase),
+
+        MemoryPatchRva(damage_2e0_start,    4,  0x44EA54 - FF3::ImageBase),
+        MemoryPatchRva(damage_2e0_end,      4,  0x44EA89 - FF3::ImageBase),
+        MemoryPatchRva(damage_size,         4,  0x44EA7D - FF3::ImageBase),
+
+        MemoryPatchRva(damage_2e0_start,    4,  0x440E08 - FF3::ImageBase),
+        MemoryPatchRva(damage_2e0_end,      4,  0x440E45 - FF3::ImageBase),
+        MemoryPatchRva(damage_size,         4,  0x440E39 - FF3::ImageBase),
+
+        MemoryPatchRva(damage_2e0_start,    4,  0x44AD59 - FF3::ImageBase),
+        MemoryPatchRva(damage_2e0_end,      4,  0x44AD7E - FF3::ImageBase),
+        MemoryPatchRva(damage_size,         4,  0x44AD78 - FF3::ImageBase),
+
+        MemoryPatchRva(damage_2e0_start,    4,  0x44DEB3 - FF3::ImageBase),
+        MemoryPatchRva(damage_2e0_end,      4,  0x44DED8 - FF3::ImageBase),
+        MemoryPatchRva(damage_size,         4,  0x44DED2 - FF3::ImageBase),
+
+        MemoryPatchRva(damage_2e0_start,    4,  0x44E39B - FF3::ImageBase),
+        MemoryPatchRva(damage_2e0_end,      4,  0x44E3C9 - FF3::ImageBase),
+        MemoryPatchRva(damage_size,         4,  0x44E3BD - FF3::ImageBase),
+
+        MemoryPatchRva(damage_2e0_start,    4,  0x455593 - FF3::ImageBase),
+        MemoryPatchRva(damage_2e0_end,      4,  0x4555C9 - FF3::ImageBase),
+        MemoryPatchRva(damage_size,         4,  0x4555BD - FF3::ImageBase),
+
+        MemoryPatchRva(damage_2e0_start,    4,  0x455621 - FF3::ImageBase),
+        MemoryPatchRva(damage_2e0_end,      4,  0x455655 - FF3::ImageBase),
+        MemoryPatchRva(damage_size,         4,  0x45564E - FF3::ImageBase),
 
         // MemoryPatchRva(0x75FFull,       2,  FF3::CheckItemCountInBuyConfirm1),
         // MemoryPatchRva(0xFFull,         1,  FF3::CheckItemCountInBuyConfirm2),
@@ -49,6 +101,7 @@ BOOL Initialize(PVOID BaseAddress)
         FunctionJumpRva(FF3::SetItemCountInBattle,  FF3_SetItemCountInBattle,   &Stub_FF3_SetItemCountInBattle),
         FunctionCallRva(FF3::SetItemCountInBag,     FF3_SetItemCountInBag),
         FunctionCallRva(FF3::SetItemCountInSort,    FF3_SetItemCountInSort),
+
         // FunctionJumpRva(FF3::RenderString,          FF3_RenderString,   &StubRenderString),
     };
 

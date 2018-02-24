@@ -24,6 +24,7 @@
     <ClInclude Include="Offset.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Battle.cpp" />
     <ClCompile Include="FF3.cpp" />
     <ClCompile Include="gl.cpp" />
     <ClCompile Include="i18n.cpp" />
