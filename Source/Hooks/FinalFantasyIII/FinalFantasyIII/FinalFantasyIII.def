@@ -28,4 +28,6 @@
     SteamNetworking
     SteamRemoteStorage
     SteamScreenshots
+
+	Direct3DCreate9=d3d9.Direct3DCreate9
 	MessageBoxA=USER32.MessageBoxA

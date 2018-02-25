@@ -144,7 +144,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>E:\Game\Steam\steamapps\common\Final Fantasy III\FF3.dll</OutputFile>
-      <AdditionalDependencies>SDL2_ttf.lib;libiconv.lib;Opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2_ttf.lib;libiconv.lib;Opengl32.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>FinalFantasyIII.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
