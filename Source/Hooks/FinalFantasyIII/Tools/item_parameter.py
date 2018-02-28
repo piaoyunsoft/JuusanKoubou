@@ -3,12 +3,18 @@ from init import *
 
 eureka_item = import_file('eureka_item', 'eureka_item').items
 
+def getName(offset):
+    try:
+        return eureka_item[offset][1]
+    except KeyError:
+        return '<%04X>' % offset
+
 class ItemEntry:
     def __init__(self, fs):
         self.type       = fs.ReadUShort()
         self.id         = fs.ReadUShort()
-        self.name       = eureka_item[fs.ReadUShort()][1]
-        self.desc       = fs.ReadUShort()
+        self.name       = getName(fs.ReadUShort())
+        self.desc       = getName(fs.ReadUShort())
 
         self.unknown1   = fs.ReadULong()
         self.unknown2   = fs.ReadULong()
@@ -26,51 +32,187 @@ class ItemEntry:
         self.buyPrice   = fs.ReadULong()
         self.sellPrice  = fs.ReadULong()
 
-        self.restoreHP  = fs.ReadUShort()
+        self.value      = fs.ReadUShort()
         self.unknown3   = fs.ReadUShort()
         self.unknown4   = fs.ReadULong()
 
     def todict(self):
         return [
             '0x%04X: {' % self.id,
-            '    type       : 0x%04X,' % self.type,
+            '    type       : %d,' % self.type,
             "    name       : '%s'," % self.name,
+            "    desc       : '%s'," % self.desc,
             '    useInBattle: %s,' % bool(self.useInBattle),
             '    useInWorld : %s,' % bool(self.useInWorld),
-            '    target     : \'%s\',' % {0: 'Ally', 1: 'Allies', 2: 'Enemy', 3: 'Enemies', 4: 'Ailment'}[self.target],
+            # '    target     : \'%s\',' % {0: 'Ally', 1: 'Allies', 2: 'Enemy', 3: 'Enemies', 4: 'Ailment'}[self.target],
             '    buyPrice   : %d,' % self.buyPrice,
             '    sellPrice  : %d,' % self.sellPrice,
-            '    restoreHP  : %d,' % self.restoreHP,
+            '    value      : %d,' % self.value,
             '},',
         ]
 
 class WeaponEntry:
     def __init__(self, fs):
-        self.type   = fs.ReadUShort()
-        self.id     = fs.ReadUShort()
-        self.name   = fs.ReadUShort()
-        self.desc   = fs.ReadUShort()
+        self.type       = fs.ReadUShort()
+        self.id         = fs.ReadUShort()
+        self.name       = getName(fs.ReadUShort())
+        self.desc       = getName(fs.ReadUShort())
+
+        self.unknown1   = fs.ReadULong()
+        self.unknown2   = fs.ReadULong()
+        self.unknown3   = fs.ReadULong()
+        self.unknown4   = fs.ReadULong()
+        self.unknown5   = fs.ReadULong()
+
+        self.buyPrice   = fs.ReadULong()
+        self.sellPrice  = fs.ReadULong()
+
+        self.unknown6   = fs.ReadULong()
+
+        self.value      = fs.ReadUShort()
+
+        self.flags      = fs.ReadUShort()
+        self.unknown7   = fs.ReadUShort()
+        self.unknown8   = fs.ReadUShort()
+        self.unknown9   = fs.ReadULong()
+        self.unknown10  = fs.ReadULong()
+
+    def todict(self):
+        return [
+            '0x%04X: {' % self.id,
+            '    type       : %d,' % self.type,
+            "    name       : '%s'," % self.name,
+            "    desc       : '%s'," % self.desc,
+            '    buyPrice   : %d,' % self.buyPrice,
+            '    sellPrice  : %d,' % self.sellPrice,
+            '    value      : %d,' % self.value,
+            '    flags      : 0x%04X,' % self.flags,
+            '},',
+        ]
 
 class ArmorEntry:
     def __init__(self, fs):
-        self.type   = fs.ReadUShort()
-        self.id     = fs.ReadUShort()
-        self.name   = fs.ReadUShort()
-        self.desc   = fs.ReadUShort()
+        self.type       = fs.ReadUShort()
+        self.id         = fs.ReadUShort()
+        self.name       = getName(fs.ReadUShort())
+        self.desc       = getName(fs.ReadUShort())
+
+        self.unknown1   = fs.ReadUShort()
+
+        self.strength   = fs.ReadByte()
+        self.agility    = fs.ReadByte()
+        self.vitality   = fs.ReadByte()
+        self.intellect  = fs.ReadByte()
+        self.mind       = fs.ReadByte()
+        self.weight     = fs.ReadByte()
+
+        self.unknown3   = fs.ReadULong()
+        self.unknown4   = fs.ReadULong()
+        self.unknown5   = fs.ReadULong()
+
+        self.buyPrice   = fs.ReadULong()
+        self.sellPrice  = fs.ReadULong()
+
+        self.unknown6   = fs.ReadULong()
+
+        self.value      = fs.ReadUShort()
+        self.value2     = fs.ReadUShort()
+
+        self.flags      = fs.ReadUShort()
+
+        self.unknown8   = fs.ReadUShort()
+        self.unknown9   = fs.ReadULong()
+        self.unknown10  = fs.ReadULong()
+        self.unknown11  = fs.ReadULong()
+
+    def todict(self):
+        return [
+            '0x%04X: {' % self.id,
+            '    type       : %d,' % self.type,
+            "    name       : '%s'," % self.name,
+            "    desc       : '%s'," % self.desc,
+            '    strength   : %d,' % self.strength,
+            '    agility    : %d,' % self.agility,
+            '    vitality   : %d,' % self.vitality,
+            '    intellect  : %d,' % self.intellect,
+            '    mind       : %d,' % self.mind,
+            '    weight     : %d,' % self.weight,
+            '    buyPrice   : %d,' % self.buyPrice,
+            '    sellPrice  : %d,' % self.sellPrice,
+            '    value      : %d,' % self.value,
+            '    value2     : %d,' % self.value2,
+            '    flags      : 0x%04X,' % self.flags,
+            '},',
+        ]
 
 class SpellEntry:
     def __init__(self, fs):
-        self.type   = fs.ReadUShort()
-        self.id     = fs.ReadUShort()
-        self.name   = fs.ReadUShort()
-        self.desc   = fs.ReadUShort()
+        self.type       = fs.ReadUShort()
+        self.id         = fs.ReadUShort()
+        self.name       = getName(fs.ReadUShort())
+        self.desc       = getName(fs.ReadUShort())
+
+        self.unknown1   = fs.ReadULong()
+        self.unknown2   = fs.ReadULong()
+        self.unknown3   = fs.ReadULong()
+        self.unknown4   = fs.ReadULong()
+        self.unknown5   = fs.ReadULong()
+
+        self.buyPrice   = fs.ReadULong()
+        self.sellPrice  = fs.ReadULong()
+
+        self.value      = fs.ReadUShort()
+        self.value2     = fs.ReadUShort()
+        self.value3     = fs.ReadUShort()
+        self.value4     = fs.ReadUShort()
+
+        self.flags      = fs.ReadUShort()
+
+        self.unknown8   = fs.ReadUShort()
+        self.unknown9   = fs.ReadULong()
+
+    def todict(self):
+        return [
+            '0x%04X: {' % self.id,
+            '    type       : %d,' % self.type,
+            "    name       : '%s'," % self.name,
+            "    desc       : '%s'," % self.desc,
+            '    buyPrice   : %d,' % self.buyPrice,
+            '    sellPrice  : %d,' % self.sellPrice,
+            '    value      : %d,' % self.value,
+            '    value2     : %d,' % self.value2,
+            '    value3     : %d,' % self.value3,
+            '    value4     : %d,' % self.value4,
+            '    flags      : 0x%04X,' % self.flags,
+            '},',
+        ]
 
 class KeyItemEntry:
     def __init__(self, fs):
-        self.type   = fs.ReadUShort()
-        self.id     = fs.ReadUShort()
-        self.name   = fs.ReadUShort()
-        self.desc   = fs.ReadUShort()
+        self.type       = fs.ReadUShort()
+        self.id         = fs.ReadUShort()
+        self.name       = getName(fs.ReadUShort())
+        self.desc       = getName(fs.ReadUShort())
+
+        self.unknown1   = fs.ReadULong()
+        self.unknown2   = fs.ReadULong()
+        self.unknown3   = fs.ReadULong()
+        self.unknown4   = fs.ReadULong()
+        self.unknown5   = fs.ReadULong()
+
+    def todict(self):
+        return [
+            '0x%04X: {' % self.id,
+            '    type       : %d,' % self.type,
+            "    name       : '%s'," % self.name,
+            "    desc       : '%s'," % self.desc,
+            '    unknown1   : 0x%08X' % self.unknown1,
+            '    unknown2   : 0x%08X' % self.unknown2,
+            '    unknown3   : 0x%08X' % self.unknown3,
+            '    unknown4   : 0x%08X' % self.unknown4,
+            '    unknown5   : 0x%08X' % self.unknown5,
+            '},',
+        ]
 
 def main():
     lines = []
@@ -104,25 +246,17 @@ def main():
 
             fs.Position = offset
             for _ in range(count):
-                obj = cls(fs)
+                pos = fs.Position
+
+                try:
+                    obj = cls(fs)
+                except KeyError:
+                    print('%X' % pos)
+                    raise
+
                 lines.append('    %s\n' % '\n    '.join(obj.todict()))
 
             lines.append('}\n')
-
-            break
-
-        # for i in range(0x7F):
-        #     pos = fs.Position
-
-        #     typ, id, name, desc = fs.ReadUShort(), fs.ReadUShort(), fs.ReadUShort(), fs.ReadUShort()
-
-        #     try:
-        #         lines.append("    0x%04X: (0x%04X, '%s', '%s')," % (id, typ, eureka_item[name][1], eureka_item[desc][1]))
-        #     except:
-        #         print('%08X: %04X %04X %04X %04X' % (pos, id, typ, name, desc))
-        #         raise
-
-        #     fs.Position += 0x34 - 8
 
     open('item_parameter.bbd.py', 'w', encoding = 'UTF-8').write('\n'.join(lines))
 
