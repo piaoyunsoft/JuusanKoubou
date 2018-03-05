@@ -160,7 +160,7 @@ class lzssdecompress
 public:
     lzssdecompress()
     {
-        _maxmatch= 18;  // 4 bit size + threshold 
+        _maxmatch= 18;  // 4 bit size + threshold
         _dictsize= 4096; // 12 bit size
         _copythreshold= 3; // 0 == copy 3 bytes
         _dict= new uint8_t[_dictsize+_maxmatch-1];
@@ -303,10 +303,10 @@ int main3()
     uint8_t *ibuf= (uint8_t*)malloc(CHUNK);
     uint8_t *obuf= (uint8_t*)malloc(CHUNK);
 
-    FILE* fin = fopen("D:\\Desktop\\iOS\\RE\\ios10_kernel\\6s_10.2\\kernelcache", "rb");
-    FILE* fout = fopen("D:\\Desktop\\iOS\\RE\\ios10_kernel\\6s_10.2\\kernelcache.decomp", "wb");
+    FILE* fin = fopen("kernelcache", "rb");
+    FILE* fout = fopen("kernelcache.decomp", "wb");
 
-    fseek(fin, 0x1BF, SEEK_SET);
+    fseek(fin, 0x1BE, SEEK_SET);
 
     while (!feof(fin))
     {
@@ -361,6 +361,8 @@ ForceInline VOID main2(LONG_PTR argc, PWSTR *argv)
     mi.cbSize = sizeof(mi);
 
     GetMonitorInfo(monitor, &mi);
+
+    main3();
 
     Ps::ExitProcess(0);
 
