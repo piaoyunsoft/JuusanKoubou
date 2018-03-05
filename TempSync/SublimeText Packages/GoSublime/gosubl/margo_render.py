@@ -1,24 +1,30 @@
 from . import gs
 from . import gspatch
+from .margo_state import view_name, view_path
 import sublime
 
 STATUS_KEY = '#mg.Status'
-STATUS_PFX = '{• '
-STATUS_SFX = ' •}'
+STATUS_PFX = '• '
+STATUS_SFX = ' •'
 STATUS_SEP = ' •• '
-STATUS_DEF = ['_']
 
 def render(view, state, status=[]):
 	sublime.set_timeout_async(lambda: _render(view, state, status), 0)
+	status_text = (STATUS_PFX +(
+			STATUS_SEP.join(status)
+		) + STATUS_SFX)
 
 def _render(view, state, status):
 	_render_status(view, status + state.status)
 	_render_issues(view, state.issues)
 
 def _render_status(view, status):
-	status_text = (STATUS_PFX +(
-		STATUS_SEP.join(status or STATUS_DEF)
-	) + STATUS_SFX)
+	if status:
+		status_text = (STATUS_PFX +(
+			STATUS_SEP.join(status)
+		) + STATUS_SFX)
+	else:
+		status_text = ''
 
 	for w in sublime.windows():
 		for v in w.views():
@@ -60,10 +66,12 @@ issue_cfgs = {
 
 def _render_issues(view, issues):
 	regions = {cfg.key: (cfg, []) for cfg in issue_cfgs.values()}
-
+	path = view_path(view)
+	name = view_name(view)
 	for isu in issues:
-		cfg = issue_cfgs[isu.tag] or issue_cfg_default
-		regions[cfg.key][1].append(_render_issue(view, isu))
+		if path == isu.path or name == isu.name:
+			cfg = issue_cfgs.get(isu.tag) or issue_cfg_default
+			regions[cfg.key][1].append(_render_issue(view, isu))
 
 	for cfg, rl in regions.values():
 		if rl:

@@ -55,6 +55,10 @@ type AgentConfig struct {
 	// Valid values are json, cbor or msgpack
 	// Default: json
 	Codec string
+
+	Stdin  io.ReadCloser
+	Stdout io.WriteCloser
+	Stderr io.WriteCloser
 }
 
 type agentReq struct {
@@ -102,7 +106,7 @@ func (rs agentRes) finalize() interface{} {
 }
 
 type Agent struct {
-	*log.Logger
+	Log   *Logger
 	Store *Store
 
 	mu sync.Mutex
@@ -117,14 +121,13 @@ type Agent struct {
 }
 
 func (ag *Agent) Run() error {
-	defer ag.stdin.Close()
-	defer ag.stdout.Close()
+	defer ag.shutdownIPC()
 	return ag.communicate()
 }
 
 func (ag *Agent) communicate() error {
-	ag.Println("ready")
-	ag.Store.Dispatch(Started{})
+	ag.Log.Println("started")
+	ag.Store.dispatch(Started{})
 
 	for {
 		rq := newAgentReq()
@@ -152,7 +155,11 @@ func (ag *Agent) createAction(name string) Action {
 }
 
 func (ag *Agent) listener(st *State) {
-	ag.send(agentRes{State: st})
+	err := ag.send(agentRes{State: st})
+	if err != nil {
+		ag.Log.Println("agent.send failed. shutting down ipc:", err)
+		go ag.shutdownIPC()
+	}
 }
 
 func (ag *Agent) send(res agentRes) error {
@@ -162,15 +169,35 @@ func (ag *Agent) send(res agentRes) error {
 	return ag.enc.Encode(res.finalize())
 }
 
+func (ag *Agent) shutdownIPC() {
+	defer ag.stdin.Close()
+	defer ag.stdout.Close()
+}
+
 func NewAgent(cfg AgentConfig) (*Agent, error) {
 	ag := &Agent{
-		Logger: Log,
-		stdin:  os.Stdin,
-		stdout: os.Stdout,
-		stderr: os.Stderr,
+		stdin:  cfg.Stdin,
+		stdout: cfg.Stdout,
+		stderr: cfg.Stderr,
 		handle: codecHandles[cfg.Codec],
 	}
-	ag.Store = newStore(ag.listener).
+	if ag.stdin == nil {
+		ag.stdin = os.Stdin
+	}
+	if ag.stdout == nil {
+		ag.stdout = os.Stdout
+	}
+	if ag.stderr == nil {
+		ag.stderr = os.Stderr
+	}
+	ag.stdin = &LockedReadCloser{ReadCloser: ag.stdin}
+	ag.stdout = &LockedWriteCloser{WriteCloser: ag.stdout}
+	ag.stderr = &LockedWriteCloser{WriteCloser: ag.stderr}
+	ag.Log = &Logger{
+		Logger: log.New(ag.stderr, "", log.Lshortfile),
+		Dbg:    log.New(ag.stderr, "DBG: ", log.Lshortfile),
+	}
+	ag.Store = newStore(ag, ag.listener).
 		Before(defaultReducers.before...).
 		Use(defaultReducers.use...).
 		After(defaultReducers.after...)
@@ -193,5 +220,6 @@ func NewAgent(cfg AgentConfig) (*Agent, error) {
 func (ag *Agent) Args() Args {
 	return Args{
 		Store: ag.Store,
+		Log:   ag.Log,
 	}
 }

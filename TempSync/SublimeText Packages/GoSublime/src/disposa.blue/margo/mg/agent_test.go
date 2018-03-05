@@ -2,6 +2,7 @@ package mg
 
 import (
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -17,6 +18,19 @@ func TestDefaults(t *testing.T) {
 		return
 	}
 
+	stdin := ag.stdin
+	if w, ok := stdin.(*LockedReadCloser); ok {
+		stdin = w.ReadCloser
+	}
+	stdout := ag.stdout
+	if w, ok := stdout.(*LockedWriteCloser); ok {
+		stdout = w.WriteCloser
+	}
+	stderr := ag.stderr
+	if w, ok := stderr.(*LockedWriteCloser); ok {
+		stderr = w.WriteCloser
+	}
+
 	cases := []struct {
 		name   string
 		expect interface{}
@@ -25,14 +39,45 @@ func TestDefaults(t *testing.T) {
 		{`DefaultCodec == json`, true, DefaultCodec == "json"},
 		{`codecHandles[DefaultCodec] exists`, true, codecHandles[DefaultCodec] != nil},
 		{`codecHandles[""] == codecHandles[DefaultCodec]`, true, codecHandles[""] == codecHandles[DefaultCodec]},
-		{`default Agent.stdin`, os.Stdin, ag.stdin},
-		{`default Agent.stdout`, os.Stdout, ag.stdout},
-		{`default Agent.stderr`, os.Stderr, ag.stderr},
+		{`default Agent.stdin`, os.Stdin, stdin},
+		{`default Agent.stdout`, os.Stdout, stdout},
+		{`default Agent.stderr`, os.Stderr, stderr},
 	}
 
 	for _, c := range cases {
 		if c.expect != c.got {
 			t.Errorf("%s? expected '%v', got '%v'", c.name, c.expect, c.got)
 		}
+	}
+}
+
+func TestStartedAction(t *testing.T) {
+	nrwc := NopReadWriteCloser{
+		Reader: strings.NewReader("{}\n"),
+	}
+	ag, err := NewAgent(AgentConfig{
+		Stdin:  nrwc,
+		Stdout: nrwc,
+		Stderr: nrwc,
+	})
+	if err != nil {
+		t.Errorf("agent creation failed: %s", err)
+		return
+	}
+
+	actions := make(chan Action)
+	ag.Store.Use(Reduce(func(mx *Ctx) *State {
+		select {
+		case actions <- mx.Action:
+		default:
+		}
+		return mx.State
+	}))
+	go ag.Run()
+	act := <-actions
+	switch act.(type) {
+	case Started:
+	default:
+		t.Errorf("Expected first action to be `Started`, but it was %T\n", act)
 	}
 }

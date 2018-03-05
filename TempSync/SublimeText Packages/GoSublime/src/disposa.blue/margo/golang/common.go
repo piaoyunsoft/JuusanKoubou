@@ -6,23 +6,31 @@ import (
 	"go/build"
 	"go/parser"
 	"go/token"
+	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf8"
 )
 
-func BuildContext(e mg.EnvMap) *build.Context {
+var (
+	CommonPatterns = append(mg.CommonPatterns[:len(mg.CommonPatterns):len(mg.CommonPatterns)],
+		regexp.MustCompile(`(?P<message>can't load package: package .+: found packages .+ \((?P<path>.+?\.go)\).+)`),
+	)
+)
+
+func BuildContext(mx *mg.Ctx) *build.Context {
 	c := build.Default
-	c.GOARCH = e.Get("GOARCH", c.GOARCH)
-	c.GOOS = e.Get("GOOS", c.GOOS)
+	c.GOARCH = mx.Env.Get("GOARCH", c.GOARCH)
+	c.GOOS = mx.Env.Get("GOOS", c.GOOS)
 	// these must be passed by the client
 	// if we leave them unset, there's a risk something will end up using os.Getenv(...)
 	logUndefined := func(k string) string {
-		v := e[k]
+		v := mx.Env[k]
 		if v == "" {
 			v = k + "-is-not-defined"
-			mg.Log.Println(v)
+			mx.Log.Println(v)
 		}
 		return v
 	}
@@ -130,4 +138,23 @@ func ParseCursorNode(src []byte, offset int) *CursorNode {
 
 func IsLetter(ch rune) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch >= utf8.RuneSelf && unicode.IsLetter(ch)
+}
+
+func IsPkgDir(dir string) bool {
+	if dir == "" || dir == "." {
+		return false
+	}
+
+	f, err := os.Open(dir)
+	if err != nil {
+		return false
+	}
+
+	l, _ := f.Readdirnames(-1)
+	for _, fn := range l {
+		if strings.HasSuffix(fn, ".go") {
+			return true
+		}
+	}
+	return false
 }

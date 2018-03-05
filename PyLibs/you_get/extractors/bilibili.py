@@ -68,7 +68,7 @@ class Bilibili(VideoExtractor):
             chksum = hashlib.md5(bytes(params_str+self.SEC2, 'utf8')).hexdigest()
             api_url = self.bangumi_api_url + params_str + '&sign=' + chksum
 
-        xml_str = get_content(api_url)
+        xml_str = get_content(api_url, headers={'referer': self.url, 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36'})
         return xml_str
 
     def parse_bili_xml(self, xml_str):
@@ -125,11 +125,11 @@ class Bilibili(VideoExtractor):
         self.referer = self.url
         self.page = get_content(self.url)
 
-        m = re.search(r'<h1.*?>(.*?)</h1>', self.page)
+        m = re.search(r'<h1.*?>(.*?)</h1>', self.page) or re.search(r'<h1 title="([^"]+)">', self.page)
         if m is not None:
             self.title = m.group(1)
         if self.title is None:
-            m = re.search(r'<meta property="og:title" content="([^"]+)">', self.page)
+            m = re.search(r'property="og:title" content="([^"]+)"', self.page)
             if m is not None:
                 self.title = m.group(1)
         if 'subtitle' in kwargs:
@@ -165,12 +165,16 @@ class Bilibili(VideoExtractor):
             qq_download_by_vid(tc_flashvars, self.title, output_dir=kwargs['output_dir'], merge=kwargs['merge'], info_only=kwargs['info_only'])
             return
 
+        has_plist = re.search(r'<option', self.page)
+        if has_plist and r1('index_(\d+).html', self.url) is None:
+            log.w('This page contains a playlist. (use --playlist to download all videos.)')
+
         try:
             cid = re.search(r'cid=(\d+)', self.page).group(1)
         except:
             cid = re.search(r'"cid":(\d+)', self.page).group(1)
         if cid is not None:
-            self.download_by_vid(cid, False, **kwargs)
+            self.download_by_vid(cid, re.search('bangumi', self.url) is not None, **kwargs)
         else:
             # flashvars?
             flashvars = re.search(r'flashvars="([^"]+)"', self.page).group(1)

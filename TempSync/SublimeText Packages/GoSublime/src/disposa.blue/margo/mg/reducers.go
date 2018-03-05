@@ -26,8 +26,8 @@ func (_ restartSupport) Reduce(mx *Ctx) *State {
 		return mx.State
 	}
 
-	dir := filepath.ToSlash(filepath.Dir(mx.View.Path))
-	if dir == "" {
+	dir := filepath.ToSlash(mx.View.Dir())
+	if !filepath.IsAbs(dir) {
 		return mx.State
 	}
 
@@ -46,15 +46,4 @@ func (_ restartSupport) Reduce(mx *Ctx) *State {
 	}
 
 	return mx.MarkObsolete()
-}
-
-type issueSupport struct{}
-
-func (_ issueSupport) Reduce(mx *Ctx) *State {
-	for _, i := range mx.Issues {
-		if i.InView(mx.View) && i.Row == mx.View.Row {
-			return mx.AddStatusf("%s: %s", i.Tag, i.Message)
-		}
-	}
-	return mx.State
 }

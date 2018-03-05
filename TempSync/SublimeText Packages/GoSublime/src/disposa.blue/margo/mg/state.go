@@ -2,7 +2,7 @@ package mg
 
 import (
 	"fmt"
-	"log"
+	"reflect"
 )
 
 type Ctx struct {
@@ -10,14 +10,12 @@ type Ctx struct {
 	Action Action
 
 	Editor EditorProps
-	Env    EnvMap
 	Store  *Store
 
-	Log *log.Logger
-	Dbg *log.Logger
+	Log *Logger
 }
 
-func newCtx(st *State, act Action, sto *Store) *Ctx {
+func newCtx(ag *Agent, st *State, act Action, sto *Store) *Ctx {
 	if st == nil {
 		panic("newCtx: state must not be nil")
 	}
@@ -30,9 +28,22 @@ func newCtx(st *State, act Action, sto *Store) *Ctx {
 
 		Store: sto,
 
-		Log: Log,
-		Dbg: Dbg,
+		Log: ag.Log,
 	}
+}
+
+func (mx *Ctx) ActionIs(actions ...Action) bool {
+	typ := reflect.TypeOf(mx.Action)
+	for _, act := range actions {
+		if reflect.TypeOf(act) == typ {
+			return true
+		}
+	}
+	return false
+}
+
+func (mx *Ctx) LangIs(names ...string) bool {
+	return mx.View.LangIs(names...)
 }
 
 func (mx *Ctx) Copy(updaters ...func(*Ctx)) *Ctx {
@@ -74,6 +85,7 @@ type EphemeralState struct {
 type State struct {
 	EphemeralState
 	View     *View
+	Env      EnvMap
 	Obsolete bool
 }
 
@@ -176,17 +188,17 @@ func makeClientProps() clientProps {
 func (c *clientProps) updateCtx(mx *Ctx) *Ctx {
 	return mx.Copy(func(mx *Ctx) {
 		mx.Editor = c.Editor
-		if c.Env != nil {
-			mx.Env = c.Env
-		}
-		if c.View != nil {
-			mx.State = mx.State.Copy(func(st *State) {
+		mx.State = mx.State.Copy(func(st *State) {
+			if c.Env != nil {
+				st.Env = c.Env
+			}
+			if c.View != nil {
 				st.View = c.View
-			})
-			// TODO: convert View.Pos to bytes
-			// at moment gocode is most affected,
-			// but to fix it here means we have to read the file off-disk
-			// so I'd rather not do that until we have some caching in place
-		}
+				// TODO: convert View.Pos to bytes
+				// at moment gocode is most affected,
+				// but to fix it here means we have to read the file off-disk
+				// so I'd rather not do that until we have some caching in place
+			}
+		})
 	})
 }
