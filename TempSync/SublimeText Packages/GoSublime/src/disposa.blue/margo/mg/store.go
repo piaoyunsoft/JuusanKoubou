@@ -33,6 +33,7 @@ func (sr storeReducers) Copy(updaters ...func(*storeReducers)) storeReducers {
 
 type Store struct {
 	mu        sync.Mutex
+	readyCh   chan struct{}
 	state     *State
 	listeners []*struct{ Listener }
 	listener  Listener
@@ -43,10 +44,23 @@ type Store struct {
 	cfg   func() EditorConfig
 	ag    *Agent
 	tasks *taskTracker
+	cache struct {
+		sync.RWMutex
+		vName string
+		vHash string
+		m     map[interface{}]interface{}
+	}
+}
+
+func (sto *Store) ready() {
+	close(sto.readyCh)
 }
 
 func (sto *Store) Dispatch(act Action) {
-	go sto.dispatch(act)
+	go func() {
+		<-sto.readyCh
+		sto.dispatch(act)
+	}()
 }
 
 func (sto *Store) dispatch(act Action) {
@@ -77,6 +91,7 @@ func (sto *Store) syncRq(ag *Agent, rq *agentReq) {
 	// TODO: add support for unpacking Action.Data
 
 	mx = rq.Props.updateCtx(mx)
+	sto.initCache(mx.View)
 	mx.State = sto.prepState(mx.State)
 	mx.State = sto.reducers.Reduce(mx)
 	rs.State = sto.updateState(mx.State, false)
@@ -111,10 +126,12 @@ func (sto *Store) prepState(st *State) *State {
 
 func newStore(ag *Agent, l Listener) *Store {
 	sto := &Store{
+		readyCh:  make(chan struct{}),
 		listener: l,
 		state:    NewState(),
 		ag:       ag,
 	}
+	sto.cache.m = map[interface{}]interface{}{}
 	sto.tasks = newTaskTracker(sto.Dispatch)
 	sto.After(sto.tasks)
 	return sto
@@ -177,4 +194,28 @@ func (sto *Store) EditorConfig(f func() EditorConfig) *Store {
 
 func (sto *Store) Begin(t Task) *TaskTicket {
 	return sto.tasks.Begin(t)
+}
+
+func (sto *Store) initCache(v *View) {
+	cc := &sto.cache
+	cc.Lock()
+	defer cc.Unlock()
+
+	if cc.vHash != v.Hash || cc.vName != v.Name {
+		cc.m = map[interface{}]interface{}{}
+	}
+}
+
+func (sto *Store) Put(k interface{}, v interface{}) {
+	sto.cache.Lock()
+	defer sto.cache.Unlock()
+
+	sto.cache.m[k] = v
+}
+
+func (sto *Store) Get(k interface{}) interface{} {
+	sto.cache.RLock()
+	defer sto.cache.RUnlock()
+
+	return sto.cache.m[k]
 }
