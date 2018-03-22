@@ -1,4 +1,4 @@
-from . import gs, gsq
+from . import gs, gsq, sh
 from .margo_agent import MargoAgent
 from .margo_common import OutputLogger, TokenCounter, Debounce
 from .margo_render import render, render_src
@@ -36,7 +36,7 @@ class MargoSingleton(object):
 				self.out.println('restarting: agent is obsolete')
 				self.restart()
 
-		sublime.set_timeout(lambda: render(view=gs.active_view(), state=self.state, status=self.status), 0)
+		sublime.set_timeout_async(lambda: render(view=gs.active_view(), state=self.state, status=self.status), 0)
 
 	def render_status(self, *a):
 		self.status = list(a)
@@ -62,7 +62,7 @@ class MargoSingleton(object):
 			a.stop()
 
 	def enabled(self, view):
-		return self._trigger_events
+		return self._trigger_events and sh.init_done
 
 	def can_trigger_event(self, view, allow_9o=False):
 		if not self._trigger_events:
