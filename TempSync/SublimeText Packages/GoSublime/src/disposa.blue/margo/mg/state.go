@@ -4,7 +4,9 @@ import (
 	"context"
 	"disposa.blue/margo/misc/pprof/pprofdo"
 	"fmt"
+	"github.com/ugorji/go/codec"
 	"go/build"
+	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
@@ -12,20 +14,25 @@ import (
 	"time"
 )
 
-var _ context.Context = (*Ctx)(nil)
+var (
+	ErrNoSettings = fmt.Errorf("no editor settings")
+
+	_ context.Context = (*Ctx)(nil)
+)
 
 type Ctx struct {
 	*State
 	Action Action
 
-	Editor EditorProps
-	Store  *Store
+	Store *Store
 
 	Log *Logger
 
 	Parent *Ctx
 	Values map[interface{}]interface{}
 	DoneC  <-chan struct{}
+
+	handle codec.Handle
 }
 
 func (_ *Ctx) Deadline() (time.Time, bool) {
@@ -67,6 +74,8 @@ func newCtx(ag *Agent, st *State, act Action, sto *Store) (mx *Ctx, done chan st
 		Log: ag.Log,
 
 		DoneC: done,
+
+		handle: ag.handle,
 	}, done
 }
 
@@ -111,10 +120,12 @@ type ReducerList []Reducer
 
 func (rl ReducerList) ReduceCtx(mx *Ctx) *Ctx {
 	for _, r := range rl {
+		var st *State
+		pprofdo.Do(mx, rl.labels(r), func(_ context.Context) {
+			st = r.Reduce(mx)
+		})
 		mx = mx.Copy(func(mx *Ctx) {
-			pprofdo.Do(mx, rl.labels(r), func(_ context.Context) {
-				mx.State = r.Reduce(mx)
-			})
+			mx.State = st
 		})
 	}
 	return mx
@@ -165,6 +176,16 @@ func Reduce(f func(*Ctx) *State) ReduceFunc {
 type EditorProps struct {
 	Name    string
 	Version string
+
+	handle   codec.Handle
+	settings codec.Raw
+}
+
+func (ep *EditorProps) Settings(v interface{}) error {
+	if ep.handle == nil || len(ep.settings) == 0 {
+		return ErrNoSettings
+	}
+	return codec.NewDecoderBytes(ep.settings, ep.handle).Decode(v)
 }
 
 type EditorConfig interface {
@@ -182,9 +203,11 @@ type EphemeralState struct {
 
 type State struct {
 	EphemeralState
-	View     *View
-	Env      EnvMap
-	Obsolete bool
+	View   *View
+	Env    EnvMap
+	Editor EditorProps
+
+	clientActions []clientAction
 }
 
 func NewState() *State {
@@ -264,16 +287,27 @@ func (st *State) AddIssues(l ...Issue) *State {
 	})
 }
 
-func (st *State) MarkObsolete() *State {
+func (st *State) addClientActions(l ...clientAction) *State {
 	return st.Copy(func(st *State) {
-		st.Obsolete = true
+		el := st.clientActions
+		st.clientActions = append(el[:len(el):len(el)], l...)
 	})
 }
 
 type clientProps struct {
-	Editor EditorProps
-	Env    EnvMap
-	View   *View
+	Editor struct {
+		EditorProps
+		Settings codec.Raw
+	}
+	Env  EnvMap
+	View *View
+}
+
+func (cp *clientProps) finalize(ag *Agent) {
+	ce := &cp.Editor
+	ep := &cp.Editor.EditorProps
+	ep.handle = ag.handle
+	ep.settings = ce.Settings
 }
 
 func makeClientProps() clientProps {
@@ -285,8 +319,8 @@ func makeClientProps() clientProps {
 
 func (c *clientProps) updateCtx(mx *Ctx) *Ctx {
 	return mx.Copy(func(mx *Ctx) {
-		mx.Editor = c.Editor
 		mx.State = mx.State.Copy(func(st *State) {
+			st.Editor = c.Editor.EditorProps
 			if c.Env != nil {
 				st.Env = c.Env
 			}
@@ -296,6 +330,16 @@ func (c *clientProps) updateCtx(mx *Ctx) *Ctx {
 				// at moment gocode is most affected,
 				// but to fix it here means we have to read the file off-disk
 				// so I'd rather not do that until we have some caching in place
+			}
+			if st.View != nil {
+				osGopath := os.Getenv("GOPATH")
+				fn := st.View.Filename()
+				for _, dir := range strings.Split(osGopath, string(filepath.ListSeparator)) {
+					if IsParentDir(dir, fn) {
+						st.Env = st.Env.Add("GOPATH", osGopath)
+						break
+					}
+				}
 			}
 		})
 	})

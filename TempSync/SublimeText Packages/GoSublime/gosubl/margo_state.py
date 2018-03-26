@@ -38,13 +38,17 @@ class State(object):
 		self.config = Config(v.get('Config') or {})
 		self.status = v.get('Status') or []
 		self.view = v.get('View') or {}
-		self.obsolete = v.get('Obsolete') is True
+		self.client_actions = [ClientAction(v=a) for a in (v.get('ClientActions') or [])]
 		self.completions = [Completion(c) for c in (v.get('Completions') or [])]
 		self.tooltips = [Tooltip(t) for t in (v.get('Tooltips') or [])]
 		self.issues = [Issue(l) for l in (v.get('Issues') or [])]
 
 	def __repr__(self):
 		return repr(self.__dict__)
+
+class ClientAction(object):
+	def __init__(self, v={}):
+		self.name = v.get('Name') or ''
 
 class Completion(object):
 	def __init__(self, v):
@@ -106,15 +110,23 @@ MAX_VIEW_SIZE = 512 << 10
 #       and then we have to re-encode that into bytes to send it
 def make_props(view=None):
 	props = {
-		'Editor': {
-			'Name': 'sublime',
-			'Version': sublime.version(),
-		},
+		'Editor': _editor_props(view),
 		'Env': sh.env(),
 		'View': _view_props(view),
 	}
 
 	return props
+
+def _editor_props(view):
+	sett = gs.setting('margo') or {}
+	if view is not None:
+		sett.update(view.settings().get('margo') or {})
+
+	return {
+		'Name': 'sublime',
+		'Version': sublime.version(),
+		'Settings': sett,
+	}
 
 def _view_props(view):
 	view = gs.active_view(view=view)

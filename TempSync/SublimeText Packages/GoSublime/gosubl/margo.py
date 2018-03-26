@@ -32,11 +32,24 @@ class MargoSingleton(object):
 			if cfg.override_settings:
 				gs._mg_override_settings = cfg.override_settings
 
-			if rs.state.obsolete:
-				self.out.println('restarting: agent is obsolete')
-				self.restart()
+		def ren():
+			render(view=gs.active_view(), state=self.state, status=self.status)
 
-		sublime.set_timeout_async(lambda: render(view=gs.active_view(), state=self.state, status=self.status), 0)
+			if rs:
+				if rs.agent is self.agent:
+					self._handle_client_actions(rs.state.client_actions)
+
+				if rs.agent and rs.agent is not self.agent:
+					rs.agent.stop()
+
+		sublime.set_timeout_async(ren, 0)
+
+	def _handle_client_actions(self, client_actions):
+		for a in client_actions:
+			if a.name == 'restart':
+				self.restart()
+			elif a.name == 'shutdown':
+				self.stop()
 
 	def render_status(self, *a):
 		self.status = list(a)
