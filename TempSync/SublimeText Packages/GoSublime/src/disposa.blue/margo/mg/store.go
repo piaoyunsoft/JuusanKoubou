@@ -41,7 +41,7 @@ type Store struct {
 		sync.Mutex
 		storeReducers
 	}
-	cfg   func() EditorConfig
+	cfg   EditorConfig
 	ag    *Agent
 	tasks *taskTracker
 	cache struct {
@@ -121,7 +121,7 @@ func (sto *Store) prepState(st *State) *State {
 	st = st.Copy()
 	st.EphemeralState = EphemeralState{}
 	if sto.cfg != nil {
-		st.Config = sto.cfg()
+		st.Config = sto.cfg
 	}
 	return st
 }
@@ -186,11 +186,11 @@ func (sto *Store) After(reducers ...Reducer) *Store {
 	})
 }
 
-func (sto *Store) EditorConfig(f func() EditorConfig) *Store {
+func (sto *Store) EditorConfig(cfg EditorConfig) *Store {
 	sto.mu.Lock()
 	defer sto.mu.Unlock()
 
-	sto.cfg = f
+	sto.cfg = cfg
 	return sto
 }
 
@@ -203,9 +203,13 @@ func (sto *Store) initCache(v *View) {
 	cc.Lock()
 	defer cc.Unlock()
 
-	if cc.vHash != v.Hash || cc.vName != v.Name {
-		cc.m = map[interface{}]interface{}{}
+	if cc.vHash == v.Hash && cc.vName == v.Name {
+		return
 	}
+
+	cc.m = map[interface{}]interface{}{}
+	cc.vHash = v.Hash
+	cc.vName = v.Name
 }
 
 func (sto *Store) Put(k interface{}, v interface{}) {
