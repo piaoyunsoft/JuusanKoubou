@@ -1,4 +1,4 @@
-<!-- **Donate:** -->
+**Donate:**
 
 If you find GoSublime useful and would like to support me and future development of GoSublime,
 please donate via one of the available methods on https://github.com/DisposaBoy/GoSublime#donations
